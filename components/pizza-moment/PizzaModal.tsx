@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { X, Star, Clock, Users, ChefHat, Flame, Plus, Minus, Phone, Bike, ChevronRight } from 'lucide-react';
 import { ItemData, ItemVariant, ItemOption } from '@/services/itemsService';
-
+ 
 interface PizzaModalProps {
   pizza: ItemData;
   isOpen: boolean;
