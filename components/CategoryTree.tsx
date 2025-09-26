@@ -3,7 +3,7 @@
 import { Folder, ChevronRight, ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 
-import { TreeCategory } from '@/types/category';
+import { TreeCategory } from '@/types/category'; 
 
 interface CategoryTreeProps {
   categories: TreeCategory[];
