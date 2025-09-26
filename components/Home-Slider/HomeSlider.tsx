@@ -1,8 +1,10 @@
 "use client";
 
+import React, { useState, useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 import Link from 'next/link';
+import { businessService, BusinessData } from '@/services/businessService';
 
 // Import Swiper styles
 import 'swiper/css';
@@ -11,6 +13,37 @@ import 'swiper/css/pagination';
 import 'swiper/css/autoplay';
 
 const HomeSlider = () => {
+  const [businessData, setBusinessData] = useState<BusinessData | null>(null);
+
+  useEffect(() => {
+    const fetchBusinessData = async () => {
+      try {
+        const data = await businessService.getAll();
+        if (data && data.length > 0) {
+          setBusinessData(data[0]);
+        }
+      } catch (error) {
+        console.error('Error fetching business data:', error);
+      }
+    };
+
+    fetchBusinessData();
+  }, []);
+
+  const formatOpeningHours = (hours: string) => {
+    if (!hours) return "11h - 13h30  |  18h00 - 21h30";
+    
+    try {
+      const parsed = JSON.parse(hours);
+      if (typeof parsed === 'object' && parsed !== null) {
+        // You can customize this formatting based on your hours structure
+        return "11h - 13h30  |  18h00 - 21h30"; // Default format for now
+      }
+      return hours;
+    } catch {
+      return hours;
+    }
+  };
   return (
     <div className="w-full">
       <Swiper
@@ -24,7 +57,7 @@ const HomeSlider = () => {
         }}
         pagination={{ clickable: true }}
         navigation
-        className="h-[60vh] md:h-[70vh] text-white"
+        className="h-[60vh] md:h-[80vh] lg:h-[85vh] xl:h-[90vh] text-white"
       >
         {/* Slide 1: Kiosque */}
         <SwiperSlide className="relative">
@@ -41,7 +74,9 @@ const HomeSlider = () => {
             <div className="text-center p-4">
               <h2 className="text-lg md:text-xl font-semibold uppercase tracking-widest">Kiosque de Langon ou Podensac</h2>
               <p className="mt-2 text-2xl md:text-4xl font-bold">Ouvert 7j/7</p>
-              <p className="text-md md:text-lg">11h - 13h30  |  18h00 - 21h30</p>
+              <p className="text-md md:text-lg">
+                {businessData?.hours ? formatOpeningHours(businessData.hours) : "11h - 13h30  |  18h00 - 21h30"}
+              </p>
               <a 
                 href="tel:+33000000000" // Replace with your actual phone number
                 className="mt-6 inline-block bg-yellow-400 text-black font-bold uppercase px-8 py-3 rounded-full hover:bg-yellow-500 transition duration-300 transform hover:scale-105"
@@ -58,7 +93,7 @@ const HomeSlider = () => {
             src="/ubereats.jpeg"
             alt="Livraison Uber Eats"
             className="absolute inset-0 w-full h-full object-cover"
-          />
+          /> 
           <div className="absolute inset-0 bg-black/50" />
           <div className="relative z-10 flex items-center justify-center h-full">
             <div className="text-center p-4">

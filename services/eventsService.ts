@@ -43,4 +43,10 @@ export const eventsService = {
     const response = await api.delete(`/events/${id}`);
     return response.data;
   },
+  
+  async getPromoEvents() {
+    const response = await api.get('/events/promo');
+    console.log(response.data);
+    return response.data;
+  },
 };
