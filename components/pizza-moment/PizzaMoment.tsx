@@ -83,10 +83,11 @@ const PizzaMoment: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const getCurrentPizza = () => pizzas[currentIndex];
+  const getCurrentPizza = () => pizzas[currentIndex] || null;
   
   const getSortedImages = (pizza: ItemData) => {
     // Sort images so default image comes first
+    if (!pizza?.images) return [];
     return [...pizza.images].sort((a, b) => {
       if (a.isDefault && !b.isDefault) return -1;
       if (!a.isDefault && b.isDefault) return 1;
@@ -100,15 +101,16 @@ const PizzaMoment: React.FC = () => {
   };
 
   const getSelectedVariantPrice = (pizza: ItemData) => {
+    if (!pizza?.variants) return 0;
     const variant = pizza.variants.find(v => v.id === selectedVariant);
     return variant?.price || pizza.variants[0]?.price || 0;
   };
 
   const isVegetarian = (pizza: ItemData) => {
-    return pizza.options.some(option => 
+    return pizza?.options?.some(option => 
       option.optionType === 'VEGETARIENNE' && 
       JSON.parse(option.optionValue) === 'Oui'
-    );
+    ) || false;
   };
 
   if (loading) {
@@ -122,6 +124,15 @@ const PizzaMoment: React.FC = () => {
 
 
   const currentPizza = getCurrentPizza();
+
+  if (!currentPizza) {
+    return (
+      <div className="text-center py-16">
+        <h3 className="text-2xl font-bold text-gray-800 mb-4">Aucune pizza du moment disponible</h3>
+        <p className="text-gray-600">Revenez bientôt pour découvrir nos créations spéciales !</p>
+      </div>
+    );
+  }
 
   return (
     <div className="relative w-full max-w-7xl mx-auto px-4 py-12">

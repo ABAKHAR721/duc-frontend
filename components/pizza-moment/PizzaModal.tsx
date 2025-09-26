@@ -11,12 +11,17 @@ interface PizzaModalProps {
 }
 
 const PizzaModal: React.FC<PizzaModalProps> = ({ pizza, isOpen, onClose }) => {
-  const [selectedVariant, setSelectedVariant] = useState<ItemVariant>(pizza.variants[0]);
+  const [selectedVariant, setSelectedVariant] = useState<ItemVariant>(pizza?.variants?.[0] || {} as ItemVariant);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
   const [isUberEatsOpen, setIsUberEatsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  // Early return if pizza is not available
+  if (!pizza || !isOpen) {
+    return null;
+  }
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -36,10 +41,10 @@ const PizzaModal: React.FC<PizzaModalProps> = ({ pizza, isOpen, onClose }) => {
   const getTotalPrice = () => getSelectedPrice() * quantity;
 
   const isVegetarian = (pizza: ItemData) => {
-    return pizza.options.some(option => 
+    return pizza?.options?.some(option => 
       option.optionType === 'VEGETARIENNE' && 
       JSON.parse(option.optionValue) === 'Oui'
-    );
+    ) || false;
   };
 
   const handleUberEatsClick = () => {
@@ -70,7 +75,7 @@ const PizzaModal: React.FC<PizzaModalProps> = ({ pizza, isOpen, onClose }) => {
     }, {} as Record<string, any[]>);
   };
 
-  const groupedOptions = groupOptionsByType(pizza.options);
+  const groupedOptions = groupOptionsByType(pizza?.options || []);
 
   return (
     <div
@@ -94,7 +99,7 @@ const PizzaModal: React.FC<PizzaModalProps> = ({ pizza, isOpen, onClose }) => {
               <ChefHat className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-3xl font-bold">{pizza.name}</h2>
+              <h2 className="text-3xl font-bold">{pizza?.name || 'Pizza'}</h2>
               <div className="flex items-center gap-2 mt-1">
                 <div className="flex items-center gap-1">
                   {[...Array(5)].map((_, i) => (
@@ -116,8 +121,8 @@ const PizzaModal: React.FC<PizzaModalProps> = ({ pizza, isOpen, onClose }) => {
                 className="relative aspect-square rounded-2xl overflow-hidden shadow-lg transition-all duration-300"
               >
                 <img
-                  src={pizza.images[selectedImageIndex]?.imageUrl || '/placeholder-pizza.jpg'}
-                  alt={pizza.name}
+                  src={pizza?.images?.[selectedImageIndex]?.imageUrl || '/placeholder-pizza.jpg'}
+                  alt={pizza?.name || 'Pizza'}
                   className="w-full h-full object-cover"
                 />
                 
@@ -134,7 +139,7 @@ const PizzaModal: React.FC<PizzaModalProps> = ({ pizza, isOpen, onClose }) => {
               </div>
 
               {/* Image Thumbnails */}
-              {pizza.images.length > 1 && (
+              {pizza?.images && pizza.images.length > 1 && (
                 <div className="flex gap-2 overflow-x-auto pb-2">
                   {pizza.images.map((image, index) => (
                     <button
@@ -148,7 +153,7 @@ const PizzaModal: React.FC<PizzaModalProps> = ({ pizza, isOpen, onClose }) => {
                     >
                       <img
                         src={image.imageUrl}
-                        alt={`${pizza.name} ${index + 1}`}
+                        alt={`${pizza?.name || 'Pizza'} ${index + 1}`}
                         className="w-full h-full object-cover"
                       />
                     </button>
@@ -163,7 +168,7 @@ const PizzaModal: React.FC<PizzaModalProps> = ({ pizza, isOpen, onClose }) => {
               <div>
                 <h3 className="text-xl font-bold text-gray-800 mb-3">Description</h3>
                 <p className="text-gray-600 leading-relaxed">
-                  {pizza.description || "Une pizza artisanale préparée avec des ingrédients frais et de qualité premium. Chaque bouchée vous transportera dans un voyage culinaire inoubliable."}
+                  {pizza?.description || "Une pizza artisanale préparée avec des ingrédients frais et de qualité premium. Chaque bouchée vous transportera dans un voyage culinaire inoubliable."}
                 </p>
               </div>
 
@@ -171,7 +176,7 @@ const PizzaModal: React.FC<PizzaModalProps> = ({ pizza, isOpen, onClose }) => {
               <div>
                 <h3 className="text-xl font-bold text-gray-800 mb-3">Tailles disponibles</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {pizza.variants.map((variant) => (
+                  {pizza?.variants?.map((variant) => (
                     <button
                       key={variant.id}
                       onClick={() => setSelectedVariant(variant)}
