@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { categoriesService } from "@/services/categoriesService";
-import DataTable from "@/components/DataTable";
+import CategoryTree from "@/components/CategoryTree";
 import FormModal from "@/components/FormModal";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,20 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-interface Category {
-  id: string;
-  name: string;
-  description: string;
-  imageUrl?: string;
-  displayOrder: number;
-  parentId?: string;
-  parent?: Category;
-  _count?: {
-    items: number;
-  };
-  createdAt: string;
-  updatedAt: string;
-}
+import { Category, TreeCategory } from '@/types/category';
 
 interface CategoryFormData {
   name: string;
@@ -40,8 +27,33 @@ interface CategoryFormData {
   parentId: string;
 }
 
+// Helper function to build the category tree
+const buildCategoryTree = (categories: Category[]): TreeCategory[] => {
+  const categoryMap: { [key: string]: TreeCategory } = {};
+  const tree: TreeCategory[] = [];
+
+  // First pass: create a map of categories by their ID and initialize children array
+  categories.forEach(category => {
+    categoryMap[category.id] = { ...category, children: [] };
+  });
+
+  // Second pass: link children to their parents
+  categories.forEach(category => {
+    if (category.parentId && categoryMap[category.parentId]) {
+      // This is a subcategory, add it to its parent's children array
+      categoryMap[category.parentId].children.push(categoryMap[category.id]);
+    } else {
+      // This is a root category
+      tree.push(categoryMap[category.id]);
+    }
+  });
+
+  return tree;
+};
+
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
+  const [categoryTree, setCategoryTree] = useState<TreeCategory[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -62,6 +74,7 @@ export default function CategoriesPage() {
     try {
       const data = await categoriesService.getAll();
       setCategories(data);
+      setCategoryTree(buildCategoryTree(data));
     } catch (error: unknown) {
       toast({
         title: "Erreur",
@@ -97,6 +110,18 @@ export default function CategoriesPage() {
       imageUrl: category.imageUrl || "",
       displayOrder: category.displayOrder.toString(),
       parentId: category.parentId || "",
+    });
+    setIsModalOpen(true);
+  };
+
+    const handleAddSubCategory = (parentId: string) => {
+    setEditingCategory(null);
+    setFormData({
+      name: "",
+      description: "",
+      imageUrl: "",
+      displayOrder: "0",
+      parentId: parentId, // Set the parent ID for the new subcategory
     });
     setIsModalOpen(true);
   };
@@ -257,14 +282,17 @@ export default function CategoriesPage() {
         </Button>
       </div>
 
-      <DataTable
-        data={categories}
-        columns={columns}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        isLoading={isLoading}
-        emptyMessage="Aucune catégorie trouvée"
-      />
+      {isLoading ? (
+        <div className="text-center p-8">Chargement de l'arborescence...</div>
+      ) : (
+        <CategoryTree 
+          categories={categoryTree}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          onAddSubCategory={handleAddSubCategory}
+          emptyMessage="Aucune catégorie trouvée"
+        />
+      )}
 
       {/* Add/Edit Modal */}
       <FormModal

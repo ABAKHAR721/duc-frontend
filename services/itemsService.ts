@@ -15,9 +15,8 @@ export interface ItemImage {
 
 export interface ItemOption {
   id?: string;
-  optionName: string;
+  optionType: string;
   optionValue: string;
-  optionType?: string;
 }
 
 export interface ItemData {

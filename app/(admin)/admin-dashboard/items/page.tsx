@@ -8,6 +8,7 @@ import DataTable from "@/components/DataTable";
 import FormModal from "@/components/FormModal";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Package, Euro, Folder, Plus, Trash2, Image, Upload } from "lucide-react";
 import {
   Dialog,
@@ -17,7 +18,9 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { itemOptionsData, optionTypes, OptionType } from "@/lib/itemOptionsData";
 
+// #region Interfaces
 interface Category {
   id: string;
   name: string;
@@ -36,12 +39,13 @@ interface ItemImage {
   isDefault: boolean;
   file?: File;
 }
-
+// optionValue will store a JSON string of the selected value(s)
+// For ALLERGENES: '["Lait", "Soja"]'
+// For VEGETARIENNE or BASE: '"Oui"' or '"Tomate"'
 interface ItemOption {
   id?: string;
-  optionName: string;
-  optionValue: string;
-  optionType?: string;
+  optionType: OptionType;
+  optionValue: string; 
 }
 
 interface Item {
@@ -67,8 +71,10 @@ interface ItemFormData {
   images: ItemImage[];
   options: ItemOption[];
 }
+// #endregion
 
-export default function ItemsPage() {
+export default function ItemsPageClient() {
+  // #region State Management
   const [items, setItems] = useState<Item[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -88,7 +94,9 @@ export default function ItemsPage() {
   });
 
   const { toast } = useToast();
+  // #endregion
 
+  // #region Data Fetching
   const fetchData = useCallback(async () => {
     try {
       const [itemsData, categoriesData] = await Promise.all([
@@ -111,7 +119,9 @@ export default function ItemsPage() {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+  // #endregion
 
+  // #region Event Handlers (CRUD)
   const handleAdd = () => {
     setEditingItem(null);
     setFormData({
@@ -145,25 +155,6 @@ export default function ItemsPage() {
     setIsDeleteModalOpen(true);
   };
 
-  const uploadFile = async (file: File): Promise<string> => {
-    const formData = new FormData();
-    formData.append('file', file);
-    
-    try {
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-      
-      if (!response.ok) throw new Error('Upload failed');
-      
-      const data = await response.json();
-      return data.url;
-    } catch (error) {
-      throw new Error('Failed to upload file');
-    }
-  };
-
   const handleSubmit = async () => {
     setIsSaving(true);
     try {
@@ -184,44 +175,31 @@ export default function ItemsPage() {
         status: formData.status,
         variants: formData.variants
           .filter(v => v.variantName && v.price > 0)
-          .map(variant => ({
-            variantName: variant.variantName,
-            price: variant.price,
-            sku: variant.sku || undefined
-          })),
+          .map(v => ({ 
+            variantName: v.variantName,
+            price: Number(v.price),
+            sku: v.sku
+          })), // Sanitize variants to only include expected fields
         images: processedImages
           .filter(img => img.imageUrl)
-          .map(image => ({
-            imageUrl: image.imageUrl,
-            isDefault: image.isDefault
-          })),
+          .map(image => ({ imageUrl: image.imageUrl, isDefault: image.isDefault })),
         options: formData.options
-          .filter(opt => opt.optionName && opt.optionValue)
-          .map(option => ({
-            optionName: option.optionName,
-            optionValue: option.optionValue,
-            optionType: option.optionType || "addon"
-          })),
+          .filter(opt => opt.optionType && opt.optionValue)
+          .map(option => {
+            const parsedValue = JSON.parse(option.optionValue);
+            return {
+              optionType: option.optionType,
+              optionValue: parsedValue  // Keep as array for ALLERGENES, single value for others
+            };
+          })
       };
 
       if (editingItem) {
         await itemsService.update(editingItem.id, payload);
-        toast({
-          title: "Succès",
-          description: "Article mis à jour avec succès",
-        });
+        toast({ title: "Succès", description: "Article mis à jour avec succès" });
       } else {
-        // Calculate main price from variants or set to 0
-        const mainPrice =
-          payload.variants && payload.variants.length > 0
-            ? Math.min(...payload.variants.map(v => v.price))
-            : 0;
-
         await itemsService.create(payload);
-        toast({
-          title: "Succès",
-          description: "Article créé avec succès",
-        });
+        toast({ title: "Succès", description: "Article créé avec succès" });
       }
       
       setIsModalOpen(false);
@@ -239,13 +217,9 @@ export default function ItemsPage() {
 
   const confirmDelete = async () => {
     if (!itemToDelete) return;
-    
     try {
       await itemsService.delete(itemToDelete.id);
-      toast({
-        title: "Succès",
-        description: "Article supprimé avec succès",
-      });
+      toast({ title: "Succès", description: "Article supprimé avec succès" });
       setIsDeleteModalOpen(false);
       setItemToDelete(null);
       fetchData();
@@ -257,54 +231,30 @@ export default function ItemsPage() {
       });
     }
   };
+  // #endregion
 
-  const handleInputChange = (field: keyof ItemFormData, value: any) => {
+  // #region Form Input Handlers
+  const handleInputChange = (field: keyof Omit<ItemFormData, 'variants' | 'images' | 'options'>, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const addVariant = () => {
-    setFormData(prev => ({
-      ...prev,
-      variants: [...prev.variants, { variantName: "", price: 0, sku: "" }]
-    }));
-  };
-
-  const removeVariant = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      variants: prev.variants.filter((_, i) => i !== index)
-    }));
-  };
-
+  // Variant Handlers
+  const addVariant = () => setFormData(prev => ({ ...prev, variants: [...prev.variants, { variantName: "", price: 0, sku: "" }] }));
+  const removeVariant = (index: number) => setFormData(prev => ({ ...prev, variants: prev.variants.filter((_, i) => i !== index) }));
   const updateVariant = (index: number, field: keyof ItemVariant, value: any) => {
     setFormData(prev => ({
       ...prev,
-      variants: prev.variants.map((variant, i) => 
-        i === index ? { ...variant, [field]: value } : variant
-      )
+      variants: prev.variants.map((v, i) => i === index ? { ...v, [field]: value } : v)
     }));
   };
 
-  const addImage = () => {
-    setFormData(prev => ({
-      ...prev,
-      images: [...prev.images, { imageUrl: "", isDefault: false }]
-    }));
-  };
-
-  const removeImage = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      images: prev.images.filter((_, i) => i !== index)
-    }));
-  };
-
+  // Image Handlers
+  const addImage = () => setFormData(prev => ({ ...prev, images: [...prev.images, { imageUrl: "", isDefault: false }] }));
+  const removeImage = (index: number) => setFormData(prev => ({ ...prev, images: prev.images.filter((_, i) => i !== index) }));
   const updateImage = (index: number, field: keyof ItemImage, value: any) => {
     setFormData(prev => ({
       ...prev,
-      images: prev.images.map((image, i) => 
-        i === index ? { ...image, [field]: value } : image
-      )
+      images: prev.images.map((img, i) => i === index ? { ...img, [field]: value } : img)
     }));
   };
 
@@ -317,44 +267,58 @@ export default function ItemsPage() {
     reader.readAsDataURL(file);
   };
 
-  const addOption = () => {
+  const uploadFile = async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await fetch('/api/upload', { method: 'POST', body: formData });
+    if (!response.ok) throw new Error('Upload failed');
+    const data = await response.json();
+    return data.url;
+  };
+
+  // New Option Handlers
+  const addOption = (optionType: OptionType) => {
+    const defaultValue = optionType === 'ALLERGENES' ? JSON.stringify([]) : JSON.stringify(null);
+    setFormData(prev => ({ ...prev, options: [...prev.options, { optionType, optionValue: defaultValue }] }));
+  };
+
+  const removeOption = (optionType: OptionType) => {
+    setFormData(prev => ({ ...prev, options: prev.options.filter(opt => opt.optionType !== optionType) }));
+  };
+
+  const updateOptionValue = (optionType: OptionType, value: string) => {
     setFormData(prev => ({
       ...prev,
-      options: [...prev.options, { optionName: "", optionValue: "", optionType: "addon" }]
+      options: prev.options.map(opt => opt.optionType === optionType ? { ...opt, optionValue: JSON.stringify(value) } : opt)
     }));
   };
 
-  const removeOption = (index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      options: prev.options.filter((_, i) => i !== index)
-    }));
+  const updateAllergenValue = (optionType: OptionType, allergen: string, isChecked: boolean) => {
+    setFormData(prev => {
+      const newOptions = prev.options.map(opt => {
+        if (opt.optionType === optionType) {
+          const currentAllergens: string[] = JSON.parse(opt.optionValue) || [];
+          const newAllergens = isChecked
+            ? [...currentAllergens, allergen]
+            : currentAllergens.filter(a => a !== allergen);
+          return { ...opt, optionValue: JSON.stringify(newAllergens) };
+        }
+        return opt;
+      });
+      return { ...prev, options: newOptions };
+    });
   };
+  // #endregion
 
-  const updateOption = (index: number, field: keyof ItemOption, value: any) => {
-    setFormData(prev => ({
-      ...prev,
-      options: prev.options.map((option, i) => 
-        i === index ? { ...option, [field]: value } : option
-      )
-    }));
-  };
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('fr-FR', {
-      style: 'currency',
-      currency: 'EUR',
-    }).format(price);
-  };
+  // #region Render Helpers
+  const formatPrice = (price: number) => new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(price);
 
   const getMainPrice = (item: Item) => {
-    if (item.variants && item.variants.length > 0) {
-      const prices = item.variants.map(v => v.price);
-      const minPrice = Math.min(...prices);
-      const maxPrice = Math.max(...prices);
-      return minPrice === maxPrice ? formatPrice(minPrice) : `${formatPrice(minPrice)} - ${formatPrice(maxPrice)}`;
-    }
-    return "N/A";
+    if (!item.variants || item.variants.length === 0) return "N/A";
+    const prices = item.variants.map(v => v.price);
+    const minPrice = Math.min(...prices);
+    const maxPrice = Math.max(...prices);
+    return minPrice === maxPrice ? formatPrice(minPrice) : `${formatPrice(minPrice)} - ${formatPrice(maxPrice)}`;
   };
 
   const getMainImage = (item: Item) => {
@@ -362,42 +326,81 @@ export default function ItemsPage() {
     return defaultImage?.imageUrl || item.images?.[0]?.imageUrl;
   };
 
+  const renderOptionInput = (option: ItemOption) => {
+    const { optionType, optionValue } = option;
+    const values = itemOptionsData[optionType];
+
+    switch (optionType) {
+      case 'ALLERGENES':
+        const selectedAllergens: string[] = JSON.parse(optionValue) || [];
+        return (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+            {values.map(allergen => (
+              <div key={allergen} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`${optionType}-${allergen}`}
+                  checked={selectedAllergens.includes(allergen)}
+                  onCheckedChange={(checked) => updateAllergenValue(optionType, allergen, !!checked)}
+                />
+                <Label htmlFor={`${optionType}-${allergen}`} className="text-sm font-normal">{allergen}</Label>
+              </div>
+            ))}
+          </div>
+        );
+      case 'VEGETARIENNE':
+      case 'BASE':
+        const selectedValue = JSON.parse(optionValue);
+        return (
+          <div className="flex items-center space-x-4 mt-2">
+            {values.map(val => (
+              <div key={val} className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  id={`${optionType}-${val}`}
+                  name={optionType}
+                  value={val}
+                  checked={selectedValue === val}
+                  onChange={(e) => updateOptionValue(optionType, e.target.value)}
+                  className="form-radio h-4 w-4 text-green-600"
+                />
+                <Label htmlFor={`${optionType}-${val}`} className="text-sm font-normal">{val}</Label>
+              </div>
+            ))}
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+  // #endregion
+
+  // #region Columns Definition
   const columns = [
     {
       key: 'name' as keyof Item,
       header: 'Nom',
-      render: (value: unknown, item: Item) => {
-        const name = value as string;
-        return (
-          <div className="flex items-center space-x-3">
-            {getMainImage(item) ? (
-              <img 
-                src={getMainImage(item)} 
-                alt={name}
-                className="w-10 h-10 rounded-lg object-cover"
-              />
-            ) : (
-              <div className="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
-                <Package className="h-5 w-5 text-gray-400" />
-              </div>
-            )}
-            <div className="font-medium">{name}</div>
-          </div>
-        );
-      },
+      render: (value: unknown, item: Item) => (
+        <div className="flex items-center space-x-3">
+          {getMainImage(item) ? (
+            <img src={getMainImage(item)} alt={item.name} className="w-10 h-10 rounded-lg object-cover" />
+          ) : (
+            <div className="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
+              <Package className="h-5 w-5 text-gray-400" />
+            </div>
+          )}
+          <div className="font-medium">{item.name}</div>
+        </div>
+      ),
     },
     {
       key: 'category' as keyof Item,
       header: 'Catégorie',
-      render: (value: unknown) => {
-        const category = value as Category | undefined;
-        return (
-          <div className="flex items-center space-x-2">
-            <Folder className="h-4 w-4 text-gray-500" />
-            <span>{category?.name || 'Non catégorisé'}</span>
-          </div>
-        );
-      },
+      render: (value: unknown, item: Item) => (
+        <div className="flex items-center space-x-2">
+          <Folder className="h-4 w-4 text-gray-500" />
+          <span>{item.category?.name || 'Non catégorisé'}</span>
+        </div>
+      ),
     },
     {
       key: 'variants' as keyof Item,
@@ -409,9 +412,7 @@ export default function ItemsPage() {
             <span className="font-medium text-sm">{getMainPrice(item)}</span>
           </div>
           <div className="text-xs text-gray-500">
-            {item.variants?.length || 0} variante{(item.variants?.length || 0) !== 1 ? 's' : ''} • 
-            {item.images?.length || 0} image{(item.images?.length || 0) !== 1 ? 's' : ''} • 
-            {item.options?.length || 0} option{(item.options?.length || 0) !== 1 ? 's' : ''}
+            {`${item.variants?.length || 0} variante(s) • ${item.images?.length || 0} image(s) • ${item.options?.length || 0} option(s)`}
           </div>
         </div>
       ),
@@ -422,42 +423,36 @@ export default function ItemsPage() {
       render: (value: unknown) => {
         const status = value as string;
         return (
-          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-            status === 'Active' 
-              ? 'bg-green-100 text-green-800' 
-              : 'bg-red-100 text-red-800'
-          }`}>
+          <span className={`px-2 py-1 rounded-full text-xs font-medium ${status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
             {status === 'Active' ? 'Actif' : 'Inactif'}
           </span>
         );
       },
     },
-  ]; 
+  ];
+  // #endregion
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex items-center space-x-3">
         <Package className="h-8 w-8 text-green-600" />
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">
-            Gestion des Articles
-          </h1>
-          <p className="text-gray-600">
-            Gérez votre catalogue de produits avec variantes et options
-          </p>
+          <h1 className="text-3xl font-bold text-gray-900">Gestion des Articles</h1>
+          <p className="text-gray-600">Gérez votre catalogue de produits avec variantes et options</p>
         </div>
       </div>
 
+      {/* Toolbar */}
       <div className="flex justify-between items-center mb-4">
-        <div className="text-sm text-gray-600">
-          {items.length} article{items.length !== 1 ? 's' : ''} au total
-        </div>
+        <div className="text-sm text-gray-600">{items.length} article{items.length !== 1 ? 's' : ''} au total</div>
         <Button onClick={handleAdd} className="bg-green-600 hover:bg-green-700">
           <Package className="h-4 w-4 mr-2" />
           Ajouter un article
         </Button>
       </div>
 
+      {/* Data Table */}
       <DataTable
         data={items}
         columns={columns}
@@ -481,234 +476,89 @@ export default function ItemsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="name">Nom de l'article</Label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) => handleInputChange("name", e.target.value)}
-                placeholder="Ex: Pizza Margherita"
-                required
-              />
+              <Input id="name" value={formData.name} onChange={(e) => handleInputChange("name", e.target.value)} placeholder="Ex: Pizza Margherita" required />
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="categoryId">Catégorie</Label>
-              <select
-                id="categoryId"
-                value={formData.categoryId || ""}
-                onChange={(e) => handleInputChange("categoryId", e.target.value)}
-                className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm"
-                required
-              >
+              <select id="categoryId" value={formData.categoryId || ""} onChange={(e) => handleInputChange("categoryId", e.target.value)} className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm" required>
                 <option value="">Sélectionnez une catégorie</option>
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
+                {categories.map((c) => (<option key={c.id} value={c.id}>{c.name}</option>))}
               </select>
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="status">Statut</Label>
-              <select
-                id="status"
-                value={formData.status}
-                onChange={(e) => handleInputChange("status", e.target.value)}
-                className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm"
-              >
+              <select id="status" value={formData.status} onChange={(e) => handleInputChange("status", e.target.value)} className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm">
                 <option value="Active">Actif</option>
                 <option value="Inactive">Inactif</option>
-                <option value="Discontinued">Discontinué</option>
               </select>
             </div>
-
             <div className="md:col-span-2 space-y-2">
               <Label htmlFor="description">Description</Label>
-              <textarea
-                id="description"
-                className="w-full min-h-[100px] px-3 py-2 border border-input bg-background rounded-md text-sm"
-                value={formData.description}
-                onChange={(e) => handleInputChange("description", e.target.value)}
-                placeholder="Description de l'article"
-              />
+              <textarea id="description" className="w-full min-h-[100px] px-3 py-2 border border-input bg-background rounded-md text-sm" value={formData.description} onChange={(e) => handleInputChange("description", e.target.value)} placeholder="Description de l'article" />
             </div>
           </div>
 
           {/* Variants Section */}
-          <div className="space-y-4">
+          <div className="space-y-4 p-4 border rounded-lg">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-medium">Variantes</h3>
-              <Button type="button" onClick={addVariant} size="sm" variant="outline">
-                <Plus className="h-4 w-4 mr-2" />
-                Ajouter une variante
-              </Button>
+              <Button type="button" onClick={addVariant} size="sm" variant="outline"><Plus className="h-4 w-4 mr-2" />Ajouter</Button>
             </div>
-            
             <div className="space-y-3">
               {formData.variants.map((variant, index) => (
-                <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-3 p-3 border rounded-lg">
-                  <div className="space-y-1">
-                    <Label>Nom de la variante</Label>
-                    <Input
-                      value={variant.variantName}
-                      onChange={(e) => updateVariant(index, "variantName", e.target.value)}
-                      placeholder="Ex: Petite, Grande"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <Label>Prix (€)</Label>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      value={variant.price}
-                      onChange={(e) => updateVariant(index, "price", parseFloat(e.target.value) || 0)}
-                      placeholder="12.50"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <Label>SKU (optionnel)</Label>
-                    <Input
-                      value={variant.sku || ""}
-                      onChange={(e) => updateVariant(index, "sku", e.target.value)}
-                      placeholder="ITEM-001-S"
-                    />
-                  </div>
-                  <div className="flex items-end">
-                    {formData.variants.length > 1 && (
-                      <Button
-                        type="button"
-                        onClick={() => removeVariant(index)}
-                        size="sm"
-                        variant="destructive"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </div>
+                <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
+                  <div className="space-y-1"><Label>Nom</Label><Input value={variant.variantName} onChange={(e) => updateVariant(index, "variantName", e.target.value)} placeholder="Ex: Petite" /></div>
+                  <div className="space-y-1"><Label>Prix (€)</Label><Input type="number" step="0.01" min="0" value={variant.price} onChange={(e) => updateVariant(index, "price", parseFloat(e.target.value) || 0)} placeholder="12.50" /></div>
+                  <div className="space-y-1"><Label>SKU</Label><Input value={variant.sku || ""} onChange={(e) => updateVariant(index, "sku", e.target.value)} placeholder="P-MAR-S" /></div>
+                  {formData.variants.length > 1 && <Button type="button" onClick={() => removeVariant(index)} size="icon" variant="destructive"><Trash2 className="h-4 w-4" /></Button>}
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* Options Section (New) */}
+          <div className="space-y-4 p-4 border rounded-lg">
+            <h3 className="text-lg font-medium">Options</h3>
+            <div className="space-y-4">
+              {optionTypes.map(optType => {
+                const existingOption = formData.options.find(o => o.optionType === optType);
+                return (
+                  <div key={optType} className="p-3 border rounded-md">
+                    <div className="flex items-center justify-between">
+                      <Label className="font-semibold">{optType}</Label>
+                      {existingOption ? (
+                        <Button type="button" size="sm" variant="ghost" className="text-red-500" onClick={() => removeOption(optType)}><Trash2 className="h-4 w-4 mr-1"/>Retirer</Button>
+                      ) : (
+                        <Button type="button" size="sm" variant="outline" onClick={() => addOption(optType)}><Plus className="h-4 w-4 mr-1"/>Ajouter</Button>
+                      )}
+                    </div>
+                    {existingOption && <div className="mt-2">{renderOptionInput(existingOption)}</div>}
+                  </div>
+                );
+              })}
             </div>
           </div>
 
           {/* Images Section */}
-          <div className="space-y-4">
+          <div className="space-y-4 p-4 border rounded-lg">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-medium">Images</h3>
-              <Button type="button" onClick={addImage} size="sm" variant="outline">
-                <Image className="h-4 w-4 mr-2" />
-                Ajouter une image
-              </Button>
+              <Button type="button" onClick={addImage} size="sm" variant="outline"><Image className="h-4 w-4 mr-2" />Ajouter</Button>
             </div>
-            
             <div className="space-y-3">
               {formData.images.map((image, index) => (
-                <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 border rounded-lg">
-                  <div className="space-y-2">
-                    <Label>Image</Label>
-                    <div className="flex space-x-2">
-                      <Input
-                        type="url"
-                        value={image.imageUrl}
-                        onChange={(e) => updateImage(index, "imageUrl", e.target.value)}
-                        placeholder="https://exemple.com/image.jpg"
-                        className="flex-1"
-                      />
-                      <div className="relative">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file) handleFileUpload(index, file);
-                          }}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                        />
-                        <Button type="button" size="sm" variant="outline">
-                          <Upload className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                    {image.imageUrl && (
-                      <img src={image.imageUrl} alt="Preview" className="w-16 h-16 object-cover rounded" />
-                    )}
-                  </div>
-                  <div className="flex items-center justify-between">
+                <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-3 items-center p-3 border rounded-lg">
+                  <div className="space-y-2 col-span-2">
+                    <Label>URL de l'image ou Télécharger</Label>
                     <div className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        checked={image.isDefault}
-                        onChange={(e) => updateImage(index, "isDefault", e.target.checked)}
-                        className="rounded border-gray-300"
-                      />
-                      <Label>Image par défaut</Label>
+                      <Input type="url" value={image.imageUrl} onChange={(e) => updateImage(index, "imageUrl", e.target.value)} placeholder="https://..." className="flex-1" />
+                      <div className="relative"><input type="file" accept="image/*" onChange={(e) => e.target.files?.[0] && handleFileUpload(index, e.target.files[0])} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" /><Button type="button" asChild variant="outline" size="icon"><Upload className="h-4 w-4" /></Button></div>
                     </div>
-                    {formData.images.length > 1 && (
-                      <Button
-                        type="button"
-                        onClick={() => removeImage(index)}
-                        size="sm"
-                        variant="destructive"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    )}
+                    {image.imageUrl && <img src={image.imageUrl} alt="Preview" className="w-16 h-16 object-cover rounded mt-2" />}
                   </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Options Section */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-medium">Options & Compléments</h3>
-              <Button type="button" onClick={addOption} size="sm" variant="outline">
-                <Plus className="h-4 w-4 mr-2" />
-                Ajouter une option
-              </Button>
-            </div>
-            
-            <div className="space-y-3">
-              {formData.options.map((option, index) => (
-                <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-3 p-3 border rounded-lg">
-                  <div className="space-y-1">
-                    <Label>Nom de l'option</Label>
-                    <Input
-                      value={option.optionName}
-                      onChange={(e) => updateOption(index, "optionName", e.target.value)}
-                      placeholder="Ex: Fromage supplémentaire"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <Label>Valeur</Label>
-                    <Input
-                      value={option.optionValue}
-                      onChange={(e) => updateOption(index, "optionValue", e.target.value)}
-                      placeholder="Ex: +2€"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <Label>Type</Label>
-                    <select
-                      value={option.optionType || "addon"}
-                      onChange={(e) => updateOption(index, "optionType", e.target.value)}
-                      className="w-full px-3 py-2 border border-input bg-background rounded-md text-sm"
-                    >
-                      <option value="addon">allergene</option>
-                      <option value="modifier">vegetable</option>
-                      <option value="choice">base</option>
-                    </select>
-                  </div>
-                  <div className="flex items-end">
-                    <Button
-                      type="button"
-                      onClick={() => removeOption(index)}
-                      size="sm"
-                      variant="destructive"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                  <div className="flex flex-col items-start justify-between h-full">
+                    <div className="flex items-center space-x-2"><Checkbox id={`isDefault-${index}`} checked={image.isDefault} onCheckedChange={(checked) => updateImage(index, "isDefault", !!checked)} /><Label htmlFor={`isDefault-${index}`}>Par défaut</Label></div>
+                    {formData.images.length > 1 && <Button type="button" onClick={() => removeImage(index)} size="sm" variant="destructive" className="mt-2"><Trash2 className="h-4 w-4" /></Button>}
                   </div>
                 </div>
               ))}
@@ -720,27 +570,11 @@ export default function ItemsPage() {
       {/* Delete Confirmation Modal */}
       <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
         <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Confirmer la suppression</DialogTitle>
-          </DialogHeader>
-          <p>
-            Êtes-vous sûr de vouloir supprimer l'article "{itemToDelete?.name}" ?
-            Cette action supprimera également toutes ses variantes, images et options.
-            Cette action est irréversible.
-          </p>
+          <DialogHeader><DialogTitle>Confirmer la suppression</DialogTitle></DialogHeader>
+          <p>Êtes-vous sûr de vouloir supprimer l'article "{itemToDelete?.name}"? Cette action est irréversible.</p>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsDeleteModalOpen(false)}
-            >
-              Annuler
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={confirmDelete}
-            >
-              Supprimer
-            </Button>
+            <Button variant="outline" onClick={() => setIsDeleteModalOpen(false)}>Annuler</Button>
+            <Button variant="destructive" onClick={confirmDelete}>Supprimer</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
