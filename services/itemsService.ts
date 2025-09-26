@@ -61,4 +61,13 @@ export const itemsService = {
     const response = await api.delete(`/items/${id}`);
     return response.data;
   },
+
+  async getByCategory(categoryName: string) {
+    const response = await api.get(`/items/category/${categoryName}`);
+    return response.data;
+  },
+
+  async getPizzaMoment() {
+    return this.getByCategory('pizza-moment');
+  },
 };
