@@ -24,8 +24,8 @@ interface User {
   phone?: string;
   role: "Admin" | "SuperAdmin";
   status: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: string | null;
+  updatedAt: string | null;
 }
 
 interface UserFormData {
@@ -110,21 +110,27 @@ export default function UsersPage() {
     setIsSaving(true);
     try {
       if (editingUser) {
-        const payload = { 
+        const updatePayload = { 
           name: formData.name,
           email: formData.email,
-          phone: formData.phone || undefined,
           role: formData.role, 
-          status: formData.status,
+          isActive: formData.status === 'Active',
           ...(formData.password && { password: formData.password })
         };
-        await usersService.update(editingUser.id, payload);
+        await usersService.update(editingUser.id, updatePayload);
         toast({
           title: "Succès",
           description: "Utilisateur mis à jour avec succès",
         });
       } else {
-        await usersService.create(formData);
+        const createPayload = {
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          role: formData.role,
+          isActive: formData.status === 'Active'
+        };
+        await usersService.create(createPayload);
         toast({
           title: "Succès",
           description: "Utilisateur créé avec succès",
@@ -169,8 +175,17 @@ export default function UsersPage() {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('fr-FR', {
+  const formatDate = (dateString: string | null | undefined) => {
+    if (!dateString) {
+      return 'Non définie';
+    }
+    
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      return 'Date invalide';
+    }
+    
+    return date.toLocaleDateString('fr-FR', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -189,35 +204,35 @@ export default function UsersPage() {
     {
       key: 'name' as keyof User,
       header: 'Nom',
-      render: (value: string) => (
-        <div className="font-medium">{value}</div>
+      render: (value: unknown, item: User) => (
+        <div className="font-medium">{item.name}</div>
       ),
     },
     {
       key: 'email' as keyof User,
       header: 'Email',
-      render: (value: string) => (
+      render: (value: unknown, item: User) => (
         <div className="flex items-center space-x-2">
           <Mail className="h-4 w-4 text-gray-500" />
-          <span>{value}</span>
+          <span>{item.email}</span>
         </div>
       ),
     },
     {
       key: 'phone' as keyof User,
       header: 'Téléphone',
-      render: (value: string | undefined) => (
-        <span className="text-sm">{value || '-'}</span>
+      render: (value: unknown, item: User) => (
+        <span className="text-sm">{item.phone || '-'}</span>
       ),
     },
     {
       key: 'role' as keyof User,
       header: 'Rôle',
-      render: (value: string) => (
+      render: (value: unknown, item: User) => (
         <div className="flex items-center space-x-2">
           <Shield className="h-4 w-4 text-gray-500" />
-          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(value)}`}>
-            {value}
+          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(item.role)}`}>
+            {item.role}
           </span>
         </div>
       ),
@@ -225,24 +240,24 @@ export default function UsersPage() {
     {
       key: 'status' as keyof User,
       header: 'Statut',
-      render: (value: string) => (
+      render: (value: unknown, item: User) => (
         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-          value === 'Active' 
+          item.status === 'Active' 
             ? 'bg-green-100 text-green-800' 
-            : value === 'Inactive'
+            : item.status === 'Inactive'
             ? 'bg-gray-100 text-gray-800'
             : 'bg-red-100 text-red-800'
         }`}>
-          {value}
+          {item.status}
         </span>
       ),
     },
     {
       key: 'createdAt' as keyof User,
       header: 'Créé le',
-      render: (value: string) => (
+      render: (value: unknown, item: User) => (
         <span className="text-sm text-gray-600">
-          {formatDate(value)}
+          {formatDate(item.createdAt)}
         </span>
       ),
     },

@@ -117,9 +117,10 @@ export default function EventsPage() {
     try {
       const payload = {
         ...formData,
-        startDate: formData.startDate ? new Date(formData.startDate + 'T00:00:00.000Z').toISOString() : undefined,
-        endDate: formData.endDate ? new Date(formData.endDate + 'T23:59:59.999Z').toISOString() : undefined,
+        startDate: formData.startDate ? new Date(formData.startDate + 'T00:00:00.000Z').toISOString() : null,
+        endDate: formData.endDate ? new Date(formData.endDate + 'T23:59:59.999Z').toISOString() : null,
       };
+
 
       if (editingEvent) {
         await eventsService.update(editingEvent.id, payload);

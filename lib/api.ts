@@ -1,4 +1,5 @@
 import axios from "axios";
+import { csrfService } from "@/services/csrfService";
 
 const API_BASE_URL = process.env.NODE_ENV === 'production' ? "" : (process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001")
 
@@ -20,11 +21,23 @@ const processQueue = (error: any, token: string | null = null) => {
   failedQueue = [];
 };
 
-api.interceptors.request.use((config) => {
+api.interceptors.request.use(async (config) => {
   if (typeof window !== 'undefined') {
     const token = localStorage.getItem("access_token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    // Add CSRF token for state-changing methods
+    const method = config.method?.toUpperCase();
+    if (method && ['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) {
+      try {
+        const csrfToken = await csrfService.getCsrfToken();
+        config.headers['X-CSRF-Token'] = csrfToken;
+      } catch (error) {
+        console.error('Failed to get CSRF token:', error);
+        // Continue without CSRF token - let the server handle the error
+      }
     }
   }
   return config;
@@ -58,8 +71,13 @@ api.interceptors.response.use(
           refresh_token: refreshToken
         });
 
-        const { access_token } = response.data;
+        const { access_token, refresh_token: newRefreshToken } = response.data;
         localStorage.setItem('access_token', access_token);
+        
+        // Update refresh token if a new one was provided (token rotation)
+        if (newRefreshToken) {
+          localStorage.setItem('refresh_token', newRefreshToken);
+        }
         
         processQueue(null, access_token);
         originalRequest.headers.Authorization = `Bearer ${access_token}`;
@@ -73,6 +91,20 @@ api.interceptors.response.use(
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
+      }
+    }
+
+    // Handle CSRF token errors
+    if (error.response?.status === 403 && 
+        error.response?.data?.message?.includes('CSRF')) {
+      try {
+        // Refresh CSRF token and retry the request
+        await csrfService.refreshToken();
+        const csrfToken = await csrfService.getCsrfToken();
+        originalRequest.headers['X-CSRF-Token'] = csrfToken;
+        return api(originalRequest);
+      } catch (csrfError) {
+        console.error('Failed to refresh CSRF token:', csrfError);
       }
     }
 

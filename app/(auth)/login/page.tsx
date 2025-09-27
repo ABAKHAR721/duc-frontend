@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,8 +13,19 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { login } = useAuth();
+  const { user, login, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
+  const router = useRouter();
+
+  // Redirect authenticated users to their dashboard
+  useEffect(() => {
+    if (!authLoading && user) {
+      const dashboardPath = user.role === 'SuperAdmin' 
+        ? '/superadmin-dashboard' 
+        : '/admin-dashboard';
+      router.replace(dashboardPath);
+    }
+  }, [user, authLoading, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,6 +48,25 @@ export default function LoginPage() {
       setIsLoading(false);
     }
   };
+
+  // Show loading while checking authentication
+  if (authLoading) {
+    return (
+      <Card className="w-full max-w-md">
+        <CardContent className="flex items-center justify-center p-8">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-700 mx-auto mb-4"></div>
+            <p className="text-gray-600">Vérification de l'authentification...</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Don't render login form if user is authenticated (will redirect)
+  if (user) {
+    return null;
+  }
 
   return (
     <Card className="w-full max-w-md">
