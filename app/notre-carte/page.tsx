@@ -7,8 +7,7 @@ import MenuCategories from '@/components/notre-carte/MenuCategories';
 import SubCategorySection from '@/components/notre-carte/SubCategorySection';
 import PizzaCustomizationModal from '@/components/notre-carte/PizzaCustomizationModal';
 import OrderModal from '@/components/notre-carte/OrderModal';
-import Navbar from '@/components/Header/Navbar';
-import MobileBottomNav from '@/components/Header/MobileBottomNav';
+import Header from '@/components/Header/Header';
 
 const NotreCarte: React.FC = () => {
   const [categories, setCategories] = useState<CategoryData[]>([]);
@@ -27,24 +26,27 @@ const NotreCarte: React.FC = () => {
 
   // Size filter state
   const [selectedSize, setSelectedSize] = useState<string>('');
-  const [showMeatOnly, setShowMeatOnly] = useState(false);
+  const [showVegetarianOnly, setShowVegetarianOnly] = useState(false);
   const [availableSizes, setAvailableSizes] = useState<string[]>([]);
 
   // Apply filters to items
   const applyFilters = (items: ItemData[]) => {
     let filtered = items;
 
-    // Filter by meat preference
-    if (showMeatOnly) {
+    // Filter by vegetarian preference
+    if (showVegetarianOnly) {
       filtered = filtered.filter(item => {
         const vegetarianOption = item.options?.find(opt => opt.optionType === 'VEGETARIENNE');
-        if (!vegetarianOption) return true; // Show items without vegetarian option
+        if (!vegetarianOption) return false; // Hide items without vegetarian option when filtering for vegetarian
         
         try {
           const parsedVeg = JSON.parse(vegetarianOption.optionValue);
-          return parsedVeg === 'Non'; // Show only non-vegetarian items
+          // When vegetarian filter is checked, show only vegetarian items
+          console.log(`Item: ${item.name}, VEGETARIENNE: ${parsedVeg}, showing vegetarian only: ${parsedVeg === 'Oui'}`);
+          return parsedVeg === 'Oui';
         } catch {
-          return vegetarianOption.optionValue === 'Non';
+          console.log(`Item: ${item.name}, VEGETARIENNE (raw): ${vegetarianOption.optionValue}, showing vegetarian only: ${vegetarianOption.optionValue === 'Oui'}`);
+          return vegetarianOption.optionValue === 'Oui';
         }
       });
     }
@@ -73,7 +75,7 @@ const NotreCarte: React.FC = () => {
     if (selectedCategory) {
       loadCategoryData();
     }
-  }, [showMeatOnly]);
+  }, [showVegetarianOnly]);
 
   useEffect(() => {
     if (selectedCategory) {
@@ -194,8 +196,8 @@ const NotreCarte: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Navigation */}
-      <Navbar />
+      {/* Header with Navigation */}
+      <Header />
       
       <div className="px-4 py-8">
         {/* Menu Categories */}
@@ -231,29 +233,28 @@ const NotreCarte: React.FC = () => {
               FILTRER
             </button>
 
-            {/* Meat Filter */}
+            {/* Vegetarian Filter */}
             <div className="flex items-center gap-2">
               <input
                 type="checkbox"
-                id="meat-only"
-                checked={showMeatOnly}
-                onChange={(e) => setShowMeatOnly(e.target.checked)}
+                id="vegetarian-only"
+                checked={showVegetarianOnly}
+                onChange={(e) => setShowVegetarianOnly(e.target.checked)}
                 className="rounded"
               />
-              <label htmlFor="meat-only" className="text-sm text-gray-700">
+              <label htmlFor="vegetarian-only" className="text-sm text-gray-700">
                 Je mange
               </label>
-              <div className="bg-orange-500 rounded-full p-1">
+              <div className="rounded-full p-1">
                 <img 
                   src="/sans-viande.svg" 
-                  alt="Viande" 
-                  className="w-4 h-4 filter invert"
+                  alt="Végétarien" 
+                  className="w-16 h-16"
                 />
               </div>
             </div>
           </div>
         </div>
-
         {/* Category Content */}
         {selectedCategoryData && (
           <SubCategorySection
@@ -278,9 +279,6 @@ const NotreCarte: React.FC = () => {
           orderDetails={orderDetails}
         />
       </div>
-      
-      {/* Mobile Bottom Navigation */}
-      <MobileBottomNav />
     </div>
   );
 };

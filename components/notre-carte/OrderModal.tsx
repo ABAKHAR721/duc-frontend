@@ -31,8 +31,8 @@ const OrderModal: React.FC<OrderModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-md w-full">
+    <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
+      <div className="bg-white/95 backdrop-blur-md rounded-xl shadow-2xl max-w-md w-full border border-white/20">
         {/* Header */}
         <div className="bg-green-700 text-white p-4 flex items-center justify-between">
           <h2 className="text-lg font-bold">COMMANDER</h2>

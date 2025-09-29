@@ -75,8 +75,8 @@ const PizzaCustomizationModal: React.FC<PizzaCustomizationModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
+      <div className="bg-white/95 backdrop-blur-md rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto border border-white/20">
         {/* Header */}
         <div className="bg-green-700 text-white p-4 flex items-center justify-between">
           <h2 className="text-lg font-bold">JE PERSONNALISE MA PIZZA</h2>
@@ -160,36 +160,6 @@ const PizzaCustomizationModal: React.FC<PizzaCustomizationModalProps> = ({
                   )}
                 </button>
               ))}
-            </div>
-          </div>
-
-          {/* Ingredients Selection */}
-          <div className="mb-6">
-            <h3 className="text-sm font-medium text-gray-600 mb-3">Je choisis mes ingrédients</h3>
-            <div className="space-y-2">
-              {/* Default ingredients from item description */}
-              {item.description && (
-                <div className="flex flex-wrap gap-2">
-                  {['Olives', 'Merguez boeuf/mouton'].map((ingredient) => (
-                    <button
-                      key={ingredient}
-                      onClick={() => handleIngredientToggle(ingredient)}
-                      className={`
-                        px-3 py-1 rounded-full text-sm transition-colors
-                        ${selectedIngredients.includes(ingredient)
-                          ? 'bg-orange-500 text-white'
-                          : 'bg-orange-100 text-orange-700 hover:bg-orange-200'
-                        }
-                      `}
-                    >
-                      {ingredient}
-                      {selectedIngredients.includes(ingredient) && (
-                        <span className="ml-1">×</span>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              )}
             </div>
           </div>
 
