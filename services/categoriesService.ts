@@ -3,10 +3,18 @@ import api from '@/lib/api';
 export interface CategoryData {
   id?: string;
   name: string;
-  description: string;
+  description?: string;
+  imageUrl?: string;
+  parentId?: string;
+  displayOrder?: number;
   itemCount?: number;
   createdAt?: string;
   updatedAt?: string;
+  children?: CategoryData[];
+  parent?: CategoryData;
+  _count?: {
+    items: number;
+  };
 }
 
 export const categoriesService = {

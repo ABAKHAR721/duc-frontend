@@ -278,7 +278,7 @@ export default function ItemsPageClient() {
 
   // New Option Handlers
   const addOption = (optionType: OptionType) => {
-    const defaultValue = optionType === 'ALLERGENES' ? JSON.stringify([]) : JSON.stringify(null);
+    const defaultValue = (optionType === 'ALLERGENES' || optionType === 'BASE') ? JSON.stringify([]) : JSON.stringify(null);
     setFormData(prev => ({ ...prev, options: [...prev.options, { optionType, optionValue: defaultValue }] }));
   };
 
@@ -293,15 +293,15 @@ export default function ItemsPageClient() {
     }));
   };
 
-  const updateAllergenValue = (optionType: OptionType, allergen: string, isChecked: boolean) => {
+  const updateCheckboxValue = (optionType: OptionType, value: string, isChecked: boolean) => {
     setFormData(prev => {
       const newOptions = prev.options.map(opt => {
         if (opt.optionType === optionType) {
-          const currentAllergens: string[] = JSON.parse(opt.optionValue) || [];
-          const newAllergens = isChecked
-            ? [...currentAllergens, allergen]
-            : currentAllergens.filter(a => a !== allergen);
-          return { ...opt, optionValue: JSON.stringify(newAllergens) };
+          const currentValues: string[] = JSON.parse(opt.optionValue) || [];
+          const newValues = isChecked
+            ? [...currentValues, value]
+            : currentValues.filter(v => v !== value);
+          return { ...opt, optionValue: JSON.stringify(newValues) };
         }
         return opt;
       });
@@ -332,23 +332,23 @@ export default function ItemsPageClient() {
 
     switch (optionType) {
       case 'ALLERGENES':
-        const selectedAllergens: string[] = JSON.parse(optionValue) || [];
+      case 'BASE':
+        const selectedValues: string[] = JSON.parse(optionValue) || [];
         return (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
-            {values.map(allergen => (
-              <div key={allergen} className="flex items-center space-x-2">
+            {values.map(value => (
+              <div key={value} className="flex items-center space-x-2">
                 <Checkbox
-                  id={`${optionType}-${allergen}`}
-                  checked={selectedAllergens.includes(allergen)}
-                  onCheckedChange={(checked) => updateAllergenValue(optionType, allergen, !!checked)}
+                  id={`${optionType}-${value}`}
+                  checked={selectedValues.includes(value)}
+                  onCheckedChange={(checked) => updateCheckboxValue(optionType, value, !!checked)}
                 />
-                <Label htmlFor={`${optionType}-${allergen}`} className="text-sm font-normal">{allergen}</Label>
+                <Label htmlFor={`${optionType}-${value}`} className="text-sm font-normal">{value}</Label>
               </div>
             ))}
           </div>
         );
       case 'VEGETARIENNE':
-      case 'BASE':
         const selectedValue = JSON.parse(optionValue);
         return (
           <div className="flex items-center space-x-4 mt-2">
