@@ -12,15 +12,14 @@ const Annonce = () => {
       try {
         const headerAnnonces = await eventsService.getAllHeader();
         setAnnonces(headerAnnonces);
-        setAnimationKey(prevKey => prevKey + 1); // Change key to re-trigger animation
+        setAnimationKey(prevKey => prevKey + 1);
       } catch (error) {
         console.error("Failed to fetch announcements:", error);
-        // Fallback to default announcements in case of an error
         const fallbackAnnonces = [
-          { description: "🎉 Offre spéciale : -20% sur toutes les commandes de plus de 30€ ce week-end !" },
-          { description: "🍕 Nouvelle pizza du mois : La Forestière avec sa crème de cèpes." },
-          { description: " Fermeture exceptionnelle le 25 Décembre." },
-          { description: "🛵 Livraison désormais disponible à Podensac !" }
+          { description: "Offre spéciale : -20% sur toutes les commandes de plus de 30€ ce week-end" },
+          { description: "Nouvelle pizza du mois : La Forestière avec sa crème de cèpes" },
+          { description: "Fermeture exceptionnelle le 25 Décembre" },
+          { description: "Livraison désormais disponible à Podensac" }
         ];
         setAnnonces(fallbackAnnonces);
         setAnimationKey(prevKey => prevKey + 1);
@@ -30,14 +29,16 @@ const Annonce = () => {
     fetchAnnonces();
   }, []);
 
-    const scrollingText = annonces.length > 0 ? annonces.map((annonce) => annonce.description).join('   -   ') : '';
-       
+    const scrollingText = annonces.length > 0 ? annonces.map((annonce) => annonce.description).join('   •   ') : '';
+
   return (
-    <div className="bg-yellow-400 text-black py-2 overflow-hidden">
+    <div className="bg-primary text-white py-3 overflow-hidden">
       {scrollingText && (
         <div className="duc-marquee-track" key={animationKey}>
-          <span className="font-medium text-sm mx-8">{scrollingText}</span>
-          <span className="font-medium text-sm mx-8" aria-hidden="true">{scrollingText}</span>
+          <span className="font-light text-sm mx-8">{scrollingText}</span>
+          <span className="font-light text-sm mx-8" aria-hidden="true">{scrollingText}</span>
+          <span className="font-light text-sm mx-8" aria-hidden="true">{scrollingText}</span>
+          <span className="font-light text-sm mx-8" aria-hidden="true">{scrollingText}</span>
         </div>
       )}
       <style jsx global>{`
@@ -46,9 +47,9 @@ const Annonce = () => {
           100% { transform: translateX(-50%); }
         }
         .duc-marquee-track {
-          display: inline-block;
+          display: inline-flex;
           white-space: nowrap;
-          animation: duc-marquee 7s linear infinite;
+          animation: duc-marquee 20s linear infinite;
           will-change: transform;
         }
       `}</style>
