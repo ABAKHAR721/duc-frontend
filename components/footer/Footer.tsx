@@ -59,26 +59,27 @@ const Footer: React.FC = () => {
 
   if (loading) {
     return (
-      <footer className="bg-gray-900 text-white py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <footer className="bg-black text-white py-8">
+        <div className="max-w-7xl mx-auto px-8">
           <div className="animate-pulse">
-            <div className="h-8 bg-gray-700 rounded w-48 mb-4"></div>
             <div className="grid md:grid-cols-3 gap-8">
               <div className="space-y-3">
-                <div className="h-4 bg-gray-700 rounded w-32"></div>
-                <div className="h-4 bg-gray-700 rounded w-40"></div>
-                <div className="h-4 bg-gray-700 rounded w-36"></div>
+                <div className="h-4 bg-white/10 rounded w-32"></div>
+                <div className="h-3 bg-white/10 rounded w-40"></div>
+                <div className="h-3 bg-white/10 rounded w-36"></div>
               </div>
               <div className="space-y-3">
-                <div className="h-4 bg-gray-700 rounded w-28"></div>
-                <div className="h-4 bg-gray-700 rounded w-44"></div>
+                <div className="h-4 bg-white/10 rounded w-20"></div>
+                <div className="h-3 bg-white/10 rounded w-32"></div>
+                <div className="h-3 bg-white/10 rounded w-28"></div>
               </div>
               <div className="space-y-3">
-                <div className="h-4 bg-gray-700 rounded w-36"></div>
-                <div className="flex gap-3">
-                  <div className="w-8 h-8 bg-gray-700 rounded"></div>
-                  <div className="w-8 h-8 bg-gray-700 rounded"></div>
-                  <div className="w-8 h-8 bg-gray-700 rounded"></div>
+                <div className="h-4 bg-white/10 rounded w-24"></div>
+                <div className="h-3 bg-white/10 rounded w-36"></div>
+                <div className="flex gap-2 mt-3">
+                  <div className="w-8 h-8 bg-white/10 rounded"></div>
+                  <div className="w-8 h-8 bg-white/10 rounded"></div>
+                  <div className="w-8 h-8 bg-white/10 rounded"></div>
                 </div>
               </div>
             </div>
@@ -90,25 +91,25 @@ const Footer: React.FC = () => {
 
   if (!businessData) {
     return (
-      <footer className="bg-gray-900 text-white py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-gray-400">Informations de l'entreprise non disponibles</p>
+      <footer className="bg-black text-white py-8">
+        <div className="max-w-7xl mx-auto px-8 text-center">
+          <p className="text-white/50 text-sm">Informations de l&apos;entreprise non disponibles</p>
         </div>
       </footer>
     );
   }
 
   return (
-    <footer className="bg-gray-900 text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <footer className="bg-black text-white">
+      <div className="max-w-7xl mx-auto px-8 py-8">
         {/* Main Footer Content */}
-        <div className="grid md:grid-cols-3 gap-8 lg:gap-12">
-          
+        <div className="grid md:grid-cols-3 gap-8">
+
           {/* Business Info & Logo */}
-          <div className="space-y-6">
-            <div className="flex items-center gap-4">
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
               {businessData.logoUrl && (
-                <div className="relative w-16 h-16 flex-shrink-0">
+                <div className="relative w-12 h-12 flex-shrink-0">
                   <Image
                     src={businessData.logoUrl}
                     alt={`${businessData.name} Logo`}
@@ -118,142 +119,123 @@ const Footer: React.FC = () => {
                 </div>
               )}
               <div>
-                <h3 className="text-2xl font-bold text-white">{businessData.name}</h3>
+                <h3 className="text-lg font-medium text-white">{businessData.name}</h3>
                 {businessData.slogan && (
-                  <p className="text-orange-400 text-sm font-medium mt-1">{businessData.slogan}</p>
+                  <p className="text-primary text-xs font-light">{businessData.slogan}</p>
                 )}
               </div>
             </div>
-            
+
             {businessData.description && (
-              <p className="text-gray-300 leading-relaxed">{businessData.description}</p>
+              <p className="text-white/90 text-sm font-light leading-relaxed">{businessData.description}</p>
             )}
           </div>
 
           {/* Contact Information */}
-          <div className="space-y-6">
-            <h4 className="text-lg font-semibold text-white border-b border-orange-500 pb-2 inline-block">
-              Informations de Contact
+          <div className="space-y-4">
+            <h4 className="text-sm font-medium text-white">
+              Contact
             </h4>
-            
-            <div className="space-y-4">
+
+            <div className="space-y-3">
               {businessData.phone && (
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-orange-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Phone className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-400">Téléphone</p>
-                    <a 
-                      href={`tel:${businessData.phone}`}
-                      className="text-white hover:text-orange-400 transition-colors font-medium"
-                    >
-                      {businessData.phone}
-                    </a>
-                  </div>
+                <div className="flex items-center gap-2">
+                  <Phone className="w-4 h-4 text-primary" />
+                  <a
+                    href={`tel:${businessData.phone}`}
+                    className="text-white/90 hover:text-white transition-colors text-sm"
+                  >
+                    {businessData.phone}
+                  </a>
                 </div>
               )}
 
               {businessData.email && (
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-orange-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Mail className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-400">Email</p>
-                    <a 
-                      href={`mailto:${businessData.email}`}
-                      className="text-white hover:text-orange-400 transition-colors font-medium"
-                    >
-                      {businessData.email}
-                    </a>
-                  </div>
+                <div className="flex items-center gap-2">
+                  <Mail className="w-4 h-4 text-primary" />
+                  <a
+                    href={`mailto:${businessData.email}`}
+                    className="text-white/90 hover:text-white transition-colors text-sm"
+                  >
+                    {businessData.email}
+                  </a>
                 </div>
               )}
 
               {businessData.address && (
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-orange-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <MapPin className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-400">Adresse</p>
-                    <p className="text-white font-medium">{businessData.address}</p>
-                  </div>
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-primary" />
+                  <p className="text-white/90 text-sm">{businessData.address}</p>
                 </div>
               )}
             </div>
           </div>
 
           {/* Opening Hours & Social Links */}
-          <div className="space-y-6">
+          <div className="space-y-4">
             {/* Opening Hours */}
             {businessData.hours && (
               <div>
-                <h4 className="text-lg font-semibold text-white border-b border-orange-500 pb-2 mb-4 inline-block">
-                  Horaires d'Ouverture
+                <h4 className="text-sm font-medium text-white mb-3">
+                  Horaires
                 </h4>
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 bg-orange-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Clock className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="text-white leading-relaxed">
-                      {formatOpeningHours(businessData.hours)}
-                    </p>
-                  </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-primary" />
+                  <p className="text-white/90 text-sm">
+                    {formatOpeningHours(businessData.hours)}
+                  </p>
                 </div>
               </div>
             )}
 
-            {/* Social Links & Delivery */}
+            {/* Social Links */}
             <div>
-              <h4 className="text-lg font-semibold text-white border-b border-orange-500 pb-2 mb-4 inline-block">
+              <h4 className="text-sm font-medium text-white mb-3">
                 Suivez-nous
               </h4>
-              
-              <div className="flex flex-wrap gap-3">
+
+              <div className="flex gap-2">
                 {businessData.urlFacebook && (
                   <a
                     href={businessData.urlFacebook}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center hover:bg-blue-700 transition-colors"
+                    className="w-8 h-8 bg-white/10 hover:bg-primary rounded flex items-center justify-center transition-colors"
                   >
-                    <Facebook className="w-6 h-6 text-white" />
+                    <Facebook className="w-4 h-4 text-white" />
                   </a>
                 )}
-                
+
                 {businessData.urlInstagram && (
                   <a
                     href={businessData.urlInstagram}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-12 h-12 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg flex items-center justify-center hover:from-purple-700 hover:to-pink-700 transition-colors"
+                    className="w-8 h-8 bg-white/10 hover:bg-primary rounded flex items-center justify-center transition-colors"
                   >
-                    <Instagram className="w-6 h-6 text-white" />
+                    <Instagram className="w-4 h-4 text-white" />
                   </a>
                 )}
-                
+
                 {businessData.urlLinkedin && (
                   <a
                     href={businessData.urlLinkedin}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-12 h-12 bg-blue-700 rounded-lg flex items-center justify-center hover:bg-blue-800 transition-colors"
+                    className="w-8 h-8 bg-white/10 hover:bg-primary rounded flex items-center justify-center transition-colors"
                   >
-                    <Linkedin className="w-6 h-6 text-white" />
+                    <Linkedin className="w-4 h-4 text-white" />
                   </a>
                 )}
-                
+
                 {businessData.uberEatsUrl && (
                   <a
                     href={businessData.uberEatsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center hover:bg-green-700 transition-colors"
+                    className="w-8 h-8 bg-white/10 hover:bg-primary rounded flex items-center justify-center transition-colors"
                   >
-                    <Bike className="w-6 h-6 text-white" />
+                    <Bike className="w-4 h-4 text-white" />
                   </a>
                 )}
               </div>
@@ -262,17 +244,28 @@ const Footer: React.FC = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-gray-700 mt-12 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-gray-400 text-sm">
+        <div className="border-t border-white/10 mt-6 pt-4">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-2">
+            <p className="text-white/50 text-xs">
               © {new Date().getFullYear()} {businessData.name}. Tous droits réservés.
             </p>
-            <div className="flex items-center gap-6 text-sm text-gray-400">
+            <p className="text-white text-xs">
+              Réalisé par{' '}
+              <a
+                href="https://digitgrow.fr"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:text-primary/80 transition-colors"
+              >
+                Digitgrow
+              </a>
+            </p>
+            <div className="flex items-center gap-4 text-xs text-white/50">
               <a href="/privacy" className="hover:text-white transition-colors">
                 Politique de confidentialité
               </a>
               <a href="/terms" className="hover:text-white transition-colors">
-                Conditions d'utilisation
+                Conditions d&apos;utilisation
               </a>
             </div>
           </div>
