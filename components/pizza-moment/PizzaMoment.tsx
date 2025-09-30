@@ -1,10 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Star, Clock, Flame, Eye } from 'lucide-react';
+import { Clock, Eye } from 'lucide-react';
 import { itemsService, ItemData } from '@/services/itemsService';
 import PizzaModal from './PizzaModal';
-import styles from './PizzaMoment.module.css';
 
 const PizzaMoment: React.FC = () => {
   const [pizzas, setPizzas] = useState<ItemData[]>([]);
@@ -48,35 +47,6 @@ const PizzaMoment: React.FC = () => {
     return () => clearInterval(interval);
   }, [currentIndex, isImageHovered, pizzas]);
 
-  const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % pizzas.length);
-    setCurrentImageIndex(0); // Reset to first image when changing pizza
-    if (pizzas[currentIndex + 1]) {
-      setSelectedVariant(pizzas[currentIndex + 1].variants[0]?.id || null);
-    }
-  };
-
-  const prevSlide = () => {
-    setCurrentIndex((prev) => (prev - 1 + pizzas.length) % pizzas.length);
-    setCurrentImageIndex(0); // Reset to first image when changing pizza
-    if (pizzas[currentIndex - 1]) {
-      setSelectedVariant(pizzas[currentIndex - 1].variants[0]?.id || null);
-    }
-  };
-
-  const nextImage = () => {
-    const currentPizza = getCurrentPizza();
-    if (currentPizza && currentPizza.images.length > 1) {
-      setCurrentImageIndex((prev) => (prev + 1) % currentPizza.images.length);
-    }
-  };
-
-  const prevImage = () => {
-    const currentPizza = getCurrentPizza();
-    if (currentPizza && currentPizza.images.length > 1) {
-      setCurrentImageIndex((prev) => (prev - 1 + currentPizza.images.length) % currentPizza.images.length);
-    }
-  };
 
   const openModal = (pizza: ItemData) => {
     setSelectedPizza(pizza);
@@ -100,11 +70,6 @@ const PizzaMoment: React.FC = () => {
     return sortedImages[currentImageIndex]?.imageUrl || '/placeholder-pizza.jpg';
   };
 
-  const getSelectedVariantPrice = (pizza: ItemData) => {
-    if (!pizza?.variants) return 0;
-    const variant = pizza.variants.find(v => v.id === selectedVariant);
-    return variant?.price || pizza.variants[0]?.price || 0;
-  };
 
   const isVegetarian = (pizza: ItemData) => {
     return pizza?.options?.some(option => 
@@ -135,197 +100,187 @@ const PizzaMoment: React.FC = () => {
   }
 
   return (
-    <div className="relative w-full max-w-7xl mx-auto px-4 py-12">
-      {/* Header Section */}
-      <div className={`text-center mb-12 ${styles.fadeInUp}`}>
-        <div className="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-2 rounded-full text-sm font-semibold mb-4">
-          <Flame className="w-4 h-4" />
-          PIZZA DU MOMENT
-        </div>
-        <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-4">
-          Découvrez Notre Création Exclusive
-        </h2>
-        <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-          Une sélection unique de pizzas artisanales, créées avec passion par nos chefs
-        </p>
-      </div>
+    <div style={{ background: 'var(--background)' }} className="py-20">
+      <div className="max-w-5xl mx-auto px-8">
 
-      {/* Main Slider Container */}
-      <div className="relative bg-white rounded-3xl shadow-2xl overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-orange-50 to-red-50 opacity-50" />
-        
-        <div className="relative grid md:grid-cols-2 gap-8 p-8 md:p-12">
-          {/* Image Section */}
-          <div key={currentIndex} className={`relative ${styles.slideIn}`}>
-            <div 
-              className={`relative aspect-square rounded-2xl overflow-hidden shadow-xl ${styles.steamEffect}`}
-              onMouseEnter={() => setIsImageHovered(true)}
-              onMouseLeave={() => setIsImageHovered(false)}
+        {/* Header Section */}
+        <div className="text-center mb-16 relative">
+          <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full text-sm font-medium mb-6 relative overflow-hidden"
+               style={{
+                 background: 'linear-gradient(135deg, var(--color-orange-100), var(--color-cream-200))',
+                 color: 'var(--color-brown-800)',
+                 border: '2px solid var(--color-orange-200)'
+               }}>
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-secondary/5 animate-pulse"></div>
+            <span className="relative z-10 tracking-wide">✨ PIZZA DU MOMENT ✨</span>
+          </div>
+
+          <h2 className="text-4xl md:text-6xl font-light mb-6 relative"
+              style={{ color: 'var(--foreground)' }}>
+            Création d&apos;Exception
+            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-24 h-0.5 bg-gradient-to-r from-primary to-secondary"></div>
+          </h2>
+
+          <p className="text-xl max-w-3xl mx-auto font-light leading-relaxed"
+             style={{ color: 'var(--muted-foreground)' }}>
+            Découvrez nos pizzas artisanales, conçues avec passion et savoir-faire
+          </p>
+        </div>
+
+        {/* Main Hero Card */}
+        <div
+          className="relative rounded-3xl overflow-hidden transition-all duration-300"
+          onMouseEnter={() => setIsImageHovered(true)}
+          onMouseLeave={() => setIsImageHovered(false)}
+        >
+          {/* Background Image */}
+          <div className="relative h-[500px] overflow-hidden">
+            <div
+              className="absolute inset-0 transition-transform duration-700 ease-out"
+              style={{
+                transform: isImageHovered ? 'scale(1.05)' : 'scale(1)',
+              }}
             >
               <img
                 key={`${currentIndex}-${currentImageIndex}`}
                 src={getCurrentImage(currentPizza)}
                 alt={`${currentPizza.name} - Image ${currentImageIndex + 1}`}
-                className={`w-full h-full object-cover ${styles.pizzaImage}`}
+                className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-              
-              {/* Image Navigation Arrows */}
-              {getSortedImages(currentPizza).length > 1 && (
-                <>
-                  <button
-                    onClick={prevImage}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/50 backdrop-blur-sm rounded-full shadow-md hover:bg-black/70 transition-all duration-300 flex items-center justify-center text-white hover:scale-110 z-10"
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={nextImage}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/50 backdrop-blur-sm rounded-full shadow-md hover:bg-black/70 transition-all duration-300 flex items-center justify-center text-white hover:scale-110 z-10"
-                  >
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
-                </>
-              )}
-              
-              {/* Floating Badge */}
-              {isVegetarian(currentPizza) && (
-                <div className={`absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full p-2 ${styles.floatingBadge}`}>
-                  <img 
-                    src="/sans-viande.svg" 
-                    alt="Végétarien" 
-                    className="w-16 h-16"
-                  />
-                </div>
-              )}
-              
-              {/* Image Indicators */}
-              {getSortedImages(currentPizza).length > 1 && (
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1">
-                  {getSortedImages(currentPizza).map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentImageIndex(index)}
-                      className={`relative w-2 h-2 rounded-full transition-all duration-300 ${
-                        index === currentImageIndex 
-                          ? 'bg-white w-6' 
-                          : 'bg-white/50 hover:bg-white/70'
-                      }`}
-                    >
-                      {/* Auto-scroll progress indicator */}
-                      {index === currentImageIndex && !isImageHovered && getSortedImages(currentPizza).length > 1 && (
-                        <div className="absolute inset-0 rounded-full border border-white/30">
-                          <div 
-                            className="absolute inset-0 rounded-full bg-white/20 animate-pulse"
-                            style={{
-                              animation: 'progress 3s linear infinite'
-                            }}
-                          />
-                        </div>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              )}
             </div>
 
-            {/* Navigation Dots */}
-            <div className="flex justify-center gap-2 mt-6">
-              {pizzas.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => {
-                    setCurrentIndex(index);
-                    setCurrentImageIndex(0); // Reset to first image when changing pizza
-                  }}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                    index === currentIndex 
-                      ? 'bg-orange-500 w-8' 
-                      : 'bg-gray-300 hover:bg-gray-400'
-                  }`}
+            {/* Dynamic Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-80" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-black/60" />
+
+            {/* Floating Badge */}
+            {isVegetarian(currentPizza) && (
+              <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full p-2">
+                <img
+                  src="/sans-viande.svg"
+                  alt="Végétarien"
+                  className="w-16 h-16"
                 />
-              ))}
-            </div>
-          </div>
+              </div>
+            )}
 
-          {/* Content Section */}
-          <div key={`content-${currentIndex}`} className={`flex flex-col justify-center ${styles.slideIn}`}>
-            <div className="mb-6">
-              <h3 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
-                {currentPizza.name}
-              </h3>
-              
-              <p className="text-gray-600 text-lg leading-relaxed mb-6">
-                {currentPizza.description || "Une création unique qui éveillera vos papilles avec des saveurs authentiques et des ingrédients de qualité premium."}
-              </p>
+            {/* Content Overlay */}
+            <div className="absolute inset-0 flex items-end">
+              <div className="w-full p-8 lg:p-12">
+                <div className="max-w-6xl mx-auto">
+                  <div className="grid lg:grid-cols-2 gap-12 items-end">
 
-              {/* Variants Selection */}
-              {currentPizza.variants.length > 0 && (
-                <div className="mb-6">
-                  <h4 className="text-lg font-semibold text-gray-800 mb-3">Choisissez votre taille</h4>
-                  <div className="flex flex-wrap gap-3">
-                    {currentPizza.variants.map((variant) => (
-                      <button
-                        key={variant.id}
-                        onClick={() => setSelectedVariant(variant.id || null)}
-                        className={`px-4 py-2 rounded-xl border-2 transition-all duration-300 ${
-                          selectedVariant === variant.id
-                            ? 'border-orange-500 bg-orange-50 text-orange-700'
-                            : 'border-gray-200 hover:border-orange-300 text-gray-700'
-                        }`}
-                      >
-                        <span className="font-medium">{variant.variantName}</span>
-                        <span className="block text-sm font-bold">
-                          {variant.price.toFixed(2)}€
+                    {/* Left Side - Main Info */}
+                    <div className="space-y-6">
+                      {/* Badge */}
+                      <div className="flex items-center gap-3">
+                        <span className="px-3 py-1 rounded-full bg-orange-500/20 backdrop-blur-sm border border-orange-500/30 text-orange-400 text-xs font-semibold">
+                          Pizza Exclusive
                         </span>
-                      </button>
-                    ))}
+                        {isVegetarian(currentPizza) && (
+                          <span className="px-3 py-1 rounded-full bg-green-500/20 backdrop-blur-sm border border-green-500/30 text-green-400 text-xs font-semibold">
+                            🌱 Végétarien
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Title */}
+                      <div>
+                        <h1 className="text-5xl lg:text-6xl font-bold text-white mb-3">
+                          {currentPizza.name}
+                        </h1>
+                        <p className="text-base text-white/90 leading-relaxed">
+                          {currentPizza.description || "Une création unique qui éveillera vos papilles avec des saveurs authentiques et des ingrédients de qualité premium."}
+                        </p>
+                      </div>
+
+                      {/* Stats */}
+                      <div className="flex items-center gap-6">
+                        <div className="flex items-center gap-2 text-gray-300">
+                          <Clock className="w-5 h-5" />
+                          <span>15-20 min</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Right Side - Order Section */}
+                    <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
+                      <div className="space-y-4">
+                        {/* Size Selection */}
+                        {currentPizza.variants.length > 0 && (
+                          <div>
+                            <label className="text-white text-sm font-medium mb-3 block">
+                              Choisissez votre taille
+                            </label>
+                            <div className="grid grid-cols-3 gap-2">
+                              {currentPizza.variants.map((variant) => (
+                                <button
+                                  key={variant.id}
+                                  onClick={() => setSelectedVariant(variant.id || null)}
+                                  className={`relative p-4 rounded-xl border transition-all duration-300 ${
+                                    selectedVariant === variant.id
+                                      ? 'bg-white text-gray-900 border-white'
+                                      : 'bg-white/5 text-white border-white/20 hover:bg-white/10'
+                                  }`}
+                                >
+                                  <div className="text-sm font-semibold">{variant.variantName}</div>
+                                  <div className={`text-lg font-bold mt-2 ${
+                                    selectedVariant === variant.id ? 'text-orange-600' : 'text-orange-400'
+                                  }`}>
+                                    {variant.price.toFixed(2)}€
+                                  </div>
+                                  {selectedVariant === variant.id && (
+                                    <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-orange-500" />
+                                  )}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* View Details Button */}
+                        <div className="flex gap-3">
+                          <button
+                            onClick={() => openModal(currentPizza)}
+                            className="flex-1 py-3 px-5 rounded-lg font-medium transition-all duration-300 hover:opacity-90 flex items-center justify-center gap-2 text-white"
+                            style={{ background: 'var(--primary)' }}
+                          >
+                            <Eye className="w-4 h-4" />
+                            <span>Voir détails</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              )}
-
-              {/* Price Display */}
-              <div className={`flex items-center gap-4 mb-8 ${styles.priceAnimation}`}>
-                <div className="text-3xl font-bold text-orange-600">
-                  {getSelectedVariantPrice(currentPizza).toFixed(2)}€
-                </div>
-                <div className="flex items-center gap-2 text-gray-500">
-                  <Clock className="w-4 h-4" />
-                  <span className="text-sm">Préparation 15-20 min</span>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex gap-4">
-                <button
-                  onClick={() => openModal(currentPizza)}
-                  className={`flex-1 bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-4 rounded-xl font-semibold hover:from-orange-600 hover:to-red-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 ${styles.buttonHover}`}
-                >
-                  <Eye className="w-5 h-5" />
-                  Voir les détails
-                </button>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Navigation Arrows */}
+        {/* Navigation Dots for multiple pizzas */}
         {pizzas.length > 1 && (
-          <>
-            <button
-              onClick={prevSlide}
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center text-gray-700 hover:text-orange-500 transform hover:scale-110"
-            >
-              <ChevronLeft className="w-6 h-6" />
-            </button>
-            <button
-              onClick={nextSlide}
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center text-gray-700 hover:text-orange-500 transform hover:scale-110"
-            >
-              <ChevronRight className="w-6 h-6" />
-            </button>
-          </>
+          <div className="flex justify-center gap-2 mt-8">
+            {pizzas.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => {
+                  setCurrentIndex(index);
+                  setCurrentImageIndex(0);
+                  if (pizzas[index]) {
+                    setSelectedVariant(pizzas[index].variants[0]?.id || null);
+                  }
+                }}
+                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                  index === currentIndex
+                    ? 'bg-primary w-8'
+                    : 'bg-gray-300 hover:bg-gray-400'
+                }`}
+              />
+            ))}
+          </div>
         )}
+
       </div>
 
       {/* Modal */}
