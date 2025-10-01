@@ -2,11 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { FiStar, FiClock, FiInfo } from 'react-icons/fi';
+import PizzaModalPreview from './PizzaModalPreview';
 
 const PizzaSingleCardHero: React.FC = () => {
   const [selectedVariant, setSelectedVariant] = useState('medium');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Single pizza data
   const pizza = {
@@ -210,6 +212,7 @@ const PizzaSingleCardHero: React.FC = () => {
                         {/* View Details Button */}
                         <div className="flex gap-3">
                           <button
+                            onClick={() => setIsModalOpen(true)}
                             className="flex-1 py-3 px-5 rounded-lg font-medium transition-all duration-300 hover:opacity-90 flex items-center justify-center gap-2 text-white"
                             style={{ background: 'var(--primary)' }}
                           >
@@ -227,6 +230,12 @@ const PizzaSingleCardHero: React.FC = () => {
         </div>
 
       </div>
+
+      {/* Modal */}
+      <PizzaModalPreview
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 };

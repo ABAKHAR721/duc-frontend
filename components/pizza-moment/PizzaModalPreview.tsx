@@ -1,17 +1,33 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Clock, Users, Flame, Plus, Minus, Phone, Bike, ChevronRight } from 'lucide-react';
-import { ItemData, ItemVariant, ItemOption } from '@/services/itemsService';
+import { X, Clock, Info, Plus, Minus, Phone, Bike, ChevronRight } from 'lucide-react';
 
-interface PizzaModalProps {
-  pizza: ItemData;
+interface PizzaModalPreviewProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const PizzaModal: React.FC<PizzaModalProps> = ({ pizza, isOpen, onClose }) => {
-  const [selectedVariant, setSelectedVariant] = useState<ItemVariant>(pizza?.variants?.[0] || {} as ItemVariant);
+const PizzaModalPreview: React.FC<PizzaModalPreviewProps> = ({ isOpen, onClose }) => {
+  const pizza = {
+    name: "La Forestière",
+    description: "Pâte artisanale garnie de crème de cèpes, champignons frais, lardons fumés et mozzarella fondante",
+    images: [
+      { imageUrl: "https://images.unsplash.com/photo-1604382355076-af4b0eb60143?w=1200&h=800&fit=crop", isDefault: true },
+      { imageUrl: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=1200&h=800&fit=crop", isDefault: false },
+      { imageUrl: "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=1200&h=800&fit=crop", isDefault: false }
+    ],
+    variants: [
+      { id: 'small', variantName: 'Petite', price: 12.50, sku: 'FOR-S' },
+      { id: 'medium', variantName: 'Moyenne', price: 15.90, sku: 'FOR-M' },
+      { id: 'large', variantName: 'Grande', price: 18.50, sku: 'FOR-L' }
+    ],
+    options: [
+      { optionType: 'VEGETARIENNE', optionValue: 'Non' }
+    ]
+  };
+
+  const [selectedVariant, setSelectedVariant] = useState(pizza.variants[1]);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [showOrderOptions, setShowOrderOptions] = useState(false);
@@ -32,47 +48,22 @@ const PizzaModal: React.FC<PizzaModalProps> = ({ pizza, isOpen, onClose }) => {
     };
   }, []);
 
-  // Early return if pizza is not available
-  if (!pizza || !isOpen) {
-    return null;
-  }
-
-  const getSelectedPrice = () => selectedVariant?.price || 0;
-  const getTotalPrice = () => getSelectedPrice() * quantity;
-
-  const isVegetarian = (pizza: ItemData) => {
-    return pizza?.options?.some(option =>
+  const isVegetarian = () => {
+    return pizza.options?.some(option =>
       option.optionType === 'VEGETARIENNE' &&
       JSON.parse(option.optionValue) === 'Oui'
     ) || false;
   };
 
-
-  const parseOptions = (optionValue: string) => {
-    try {
-      return JSON.parse(optionValue);
-    } catch {
-      return optionValue;
-    }
+  const getSelectedPrice = () => {
+    return selectedVariant?.price || 0;
   };
 
-  const groupOptionsByType = (options: ItemOption[]) => {
-    return options.reduce((acc, option) => {
-      if (!acc[option.optionType]) {
-        acc[option.optionType] = [];
-      }
-      const parsedValue = parseOptions(option.optionValue);
-      if (option.optionType === 'ALLERGENES' && Array.isArray(parsedValue)) {
-        // For allergens, spread the array to show individual items
-        acc[option.optionType].push(...parsedValue);
-      } else {
-        acc[option.optionType].push(parsedValue);
-      }
-      return acc;
-    }, {} as Record<string, any[]>);
+  const getTotalPrice = () => {
+    return getSelectedPrice() * quantity;
   };
 
-  const groupedOptions = groupOptionsByType(pizza?.options || []);
+  if (!isOpen) return null;
 
   return (
     <div
@@ -95,14 +86,14 @@ const PizzaModal: React.FC<PizzaModalProps> = ({ pizza, isOpen, onClose }) => {
 
           <div className="max-w-2xl">
             <h2 className="text-3xl font-light mb-2" style={{ color: 'var(--foreground)' }}>
-              {pizza?.name || 'Pizza'}
+              {pizza.name}
             </h2>
             <div className="flex items-center gap-4 text-sm" style={{ color: 'var(--muted-foreground)' }}>
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4" />
-                <span>15-20 min</span>
+                <span>{pizza.preparationTime} min</span>
               </div>
-              {isVegetarian(pizza) && (
+              {pizza.isVegetarian && (
                 <span className="px-2 py-1 rounded-full bg-green-100 text-green-800 text-xs">
                   🌱 Végétarien
                 </span>
@@ -114,29 +105,19 @@ const PizzaModal: React.FC<PizzaModalProps> = ({ pizza, isOpen, onClose }) => {
         <div className="overflow-y-auto max-h-[calc(90vh-120px)]">
           <div className="p-8">
             <div className="grid lg:grid-cols-2 gap-8">
-              {/* Image Gallery */}
+
+              {/* Image Section */}
               <div className="space-y-4">
                 <div className="relative aspect-square rounded-2xl overflow-hidden">
                   <img
-                    src={pizza?.images?.[selectedImageIndex]?.imageUrl || '/placeholder-pizza.jpg'}
-                    alt={pizza?.name || 'Pizza'}
+                    src={pizza.images[selectedImageIndex]?.imageUrl}
+                    alt={pizza.name}
                     className="w-full h-full object-cover"
                   />
-
-                  {/* Vegetarian Icon */}
-                  {isVegetarian(pizza) && (
-                    <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full p-2">
-                      <img
-                        src="/sans-viande.svg"
-                        alt="Végétarien"
-                        className="w-16 h-16"
-                      />
-                    </div>
-                  )}
                 </div>
 
                 {/* Image Thumbnails */}
-                {pizza?.images && pizza.images.length > 1 && (
+                {pizza.images.length > 1 && (
                   <div className="flex gap-2">
                     {pizza.images.map((image, index) => (
                       <button
@@ -150,7 +131,7 @@ const PizzaModal: React.FC<PizzaModalProps> = ({ pizza, isOpen, onClose }) => {
                       >
                         <img
                           src={image.imageUrl}
-                          alt={`${pizza?.name || 'Pizza'} ${index + 1}`}
+                          alt={`${pizza.name} ${index + 1}`}
                           className="w-full h-full object-cover"
                         />
                       </button>
@@ -161,23 +142,25 @@ const PizzaModal: React.FC<PizzaModalProps> = ({ pizza, isOpen, onClose }) => {
 
               {/* Content Section */}
               <div className="space-y-6">
+
                 {/* Description */}
                 <div>
                   <h3 className="text-lg font-medium mb-3" style={{ color: 'var(--foreground)' }}>
                     Description
                   </h3>
                   <p className="leading-relaxed text-sm" style={{ color: 'var(--muted-foreground)' }}>
-                    {pizza?.description || "Une pizza artisanale préparée avec des ingrédients frais et de qualité premium. Chaque bouchée vous transportera dans un voyage culinaire inoubliable."}
+                    {pizza.description}
                   </p>
                 </div>
 
-                {/* Variants Selection */}
+
+                {/* Size Selection */}
                 <div>
                   <h3 className="text-lg font-medium mb-3" style={{ color: 'var(--foreground)' }}>
-                    Tailles disponibles
+                    Choisissez votre taille
                   </h3>
                   <div className="space-y-2">
-                    {pizza?.variants?.map((variant) => (
+                    {pizza.variants.map((variant) => (
                       <button
                         key={variant.id}
                         onClick={() => setSelectedVariant(variant)}
@@ -207,49 +190,14 @@ const PizzaModal: React.FC<PizzaModalProps> = ({ pizza, isOpen, onClose }) => {
                   </div>
                 </div>
 
-                {/* Options */}
-                {Object.keys(groupedOptions).length > 0 && (
-                  <div>
-                    <h3 className="text-lg font-medium mb-3" style={{ color: 'var(--foreground)' }}>Informations détaillées</h3>
-                    <div className="space-y-4">
-                      {Object.entries(groupedOptions).map(([type, values]) => (
-                        <div key={type} className="rounded-xl p-4" style={{ backgroundColor: 'var(--muted)' }}>
-                          <h4 className="font-medium mb-2 capitalize flex items-center gap-2" style={{ color: 'var(--foreground)' }}>
-                            {type === 'ingredients' && <Flame className="w-4 h-4 text-orange-500" />}
-                            {type === 'allergens' && <Users className="w-4 h-4 text-red-500" />}
-                            {type === 'nutrition' && <Clock className="w-4 h-4 text-green-500" />}
-                            {type}
-                          </h4>
-                          <div className="flex flex-wrap gap-2">
-                            {values.map((value, index) => (
-                              <span
-                                key={index}
-                                className="px-3 py-1 rounded-full text-xs border"
-                                style={{
-                                  backgroundColor: 'var(--background)',
-                                  color: 'var(--muted-foreground)',
-                                  borderColor: 'var(--border)'
-                                }}
-                              >
-                                {typeof value === 'object' ? JSON.stringify(value) : value}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Quantity and Order */}
+                {/* Order Summary */}
                 <div className="border-t pt-6">
                   <div className="bg-gray-50 rounded-2xl p-6" style={{ backgroundColor: 'var(--muted)' }}>
-
                     {/* Quantity Controls */}
                     <div className="flex items-center justify-between mb-4">
                       <div>
                         <div className="text-sm" style={{ color: 'var(--muted-foreground)' }}>
-                          Prix unitaire
+                          {pizza.variants.find(v => v.id === selectedVariant)?.variantName} - Prix unitaire
                         </div>
                         <div className="text-xl font-bold" style={{ color: 'var(--primary)' }}>
                           {getSelectedPrice().toFixed(2)}€
@@ -279,13 +227,20 @@ const PizzaModal: React.FC<PizzaModalProps> = ({ pizza, isOpen, onClose }) => {
 
                     {/* Total Price */}
                     <div className="border-t pt-4 mb-4" style={{ borderColor: 'var(--border)' }}>
-                      <div className="flex items-center justify-between mb-4">
-                        <span className="text-lg font-semibold" style={{ color: 'var(--foreground)' }}>
-                          Total
-                        </span>
-                        <span className="text-2xl font-bold" style={{ color: 'var(--primary)' }}>
-                          {getTotalPrice().toFixed(2)}€
-                        </span>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="text-sm" style={{ color: 'var(--muted-foreground)' }}>
+                            Total ({quantity} pizza{quantity > 1 ? 's' : ''})
+                          </div>
+                          <div className="text-2xl font-bold" style={{ color: 'var(--primary)' }}>
+                            {getTotalPrice().toFixed(2)}€
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs px-3 py-1 rounded-full"
+                             style={{ backgroundColor: 'var(--primary)/10', color: 'var(--primary)' }}>
+                          <Info className="w-3 h-3" />
+                          <span>Préparation {pizza.preparationTime} min</span>
+                        </div>
                       </div>
                     </div>
 
@@ -363,4 +318,4 @@ const PizzaModal: React.FC<PizzaModalProps> = ({ pizza, isOpen, onClose }) => {
   );
 };
 
-export default PizzaModal;
+export default PizzaModalPreview;
