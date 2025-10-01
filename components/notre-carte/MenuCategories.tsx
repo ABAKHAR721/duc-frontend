@@ -29,41 +29,54 @@ const MenuCategories: React.FC<MenuCategoriesProps> = ({
   };
 
   return (
-    <div className="w-full mb-8">
-      <h1 className="text-3xl font-bold text-center text-green-800 mb-8">
-        NOTRE CARTE
-      </h1>
+    <div className="w-full">
+      <div className="text-center mb-6">
+        <h2 className="text-xl md:text-2xl font-light mb-3" style={{ color: 'var(--foreground)' }}>
+          Choisissez votre catégorie
+        </h2>
+        <div className="w-12 h-0.5 bg-gradient-to-r from-orange-500 to-red-500 mx-auto"></div>
+      </div>
       
-      <div className="max-w-4xl mx-auto">
-        <div className="flex flex-wrap justify-start gap-3 mb-4">
-        {mainCategories.map((category) => (
-          <button
-            key={category.id}
-            onClick={() => onCategorySelect(category.id!)}
-            className={`
-              relative overflow-hidden rounded-2xl p-3 w-36 h-36 flex flex-col items-center justify-center
-              transition-all duration-300
-              ${selectedCategory === category.id 
-                ? 'bg-green-700 text-white shadow-2xl transform scale-105 ring-2 ring-orange-400' 
-                : 'bg-green-600 text-white hover:bg-green-700'
-              }
-            `}
-          >
-            {/* Category Image */}
-            <div className="relative z-10 mb-2">
+      {/* Horizontal Scrollable Categories */}
+      <div className="overflow-x-auto pb-4">
+        <div className="flex gap-3 md:gap-4 px-2" style={{ minWidth: 'max-content' }}>
+          {mainCategories.map((category) => (
+            <button
+              key={category.id}
+              onClick={() => onCategorySelect(category.id!)}
+              className={`
+                group relative overflow-hidden rounded-2xl flex-shrink-0 transition-all duration-500 transform hover:scale-105
+                ${selectedCategory === category.id 
+                  ? 'shadow-2xl ring-3 ring-orange-300' 
+                  : 'shadow-lg hover:shadow-xl'
+                }
+              `}
+              style={{ 
+                width: '120px', 
+                height: '120px',
+                minWidth: '120px'
+              }}
+            >
+              {/* Full Background Image */}
               {category.imageUrl ? (
-                <img 
-                  src={category.imageUrl} 
-                  alt={category.name}
-                  className="w-16 h-16 object-cover rounded-lg mx-auto"
-                  onError={(e) => {
-                    // Fallback to text if image fails to load
-                    e.currentTarget.style.display = 'none';
-                  }}
-                />
+                <div className="absolute inset-0">
+                  <img 
+                    src={category.imageUrl} 
+                    alt={category.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                  {/* Gradient Overlay for Text Readability */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+                  {selectedCategory === category.id && (
+                    <div className="absolute inset-0 bg-gradient-to-t from-orange-500/40 via-orange-500/10 to-transparent"></div>
+                  )}
+                </div>
               ) : (
-                <div className="w-16 h-16 bg-green-500 rounded-lg flex items-center justify-center mx-auto">
-                  <span className="text-2xl">
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center">
+                  <span className="text-4xl">
                     {category.name.includes('pizza') ? '🍕' : 
                      category.name.toLowerCase().includes('boisson') ? '🥤' : 
                      category.name.toLowerCase().includes('dessert') ? '🍰' : 
@@ -71,21 +84,29 @@ const MenuCategories: React.FC<MenuCategoriesProps> = ({
                   </span>
                 </div>
               )}
-            </div>
-            
-            {/* Category content */}
-            <div className="relative z-10 text-center">
-              <h3 className="text-sm font-bold uppercase tracking-wide">
-                {category.name}
-              </h3>
-              {category._count?.items !== undefined && (
-                <p className="text-xs mt-1 opacity-80">
-                  {category._count.items} item{category._count.items !== 1 ? 's' : ''}
-                </p>
+              
+              {/* Text Content */}
+              <div className="absolute inset-0 flex flex-col items-center justify-end p-3 text-center">
+                <h3 className="text-xs font-bold uppercase tracking-wide leading-tight text-white drop-shadow-lg">
+                  {category.name}
+                </h3>
+                {category._count?.items !== undefined && (
+                  <p className="text-xs text-white/90 drop-shadow-md mt-1">
+                    {category._count.items} item{category._count.items !== 1 ? 's' : ''}
+                  </p>
+                )}
+              </div>
+
+              {/* Selection Indicator */}
+              {selectedCategory === category.id && (
+                <div className="absolute top-2 right-2">
+                  <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-lg">
+                    <div className="w-3 h-3 bg-gradient-to-r from-orange-500 to-red-500 rounded-full"></div>
+                  </div>
+                </div>
               )}
-            </div>
-          </button>
-        ))}
+            </button>
+          ))}
         </div>
       </div>
     </div>

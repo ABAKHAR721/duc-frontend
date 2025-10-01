@@ -5,7 +5,11 @@ import Link from "next/link"
 import { FiMenu, FiX, FiChevronDown, FiChevronRight } from "react-icons/fi"
 import Logo from "./Logo"
 
-const Header = () => {
+interface HeaderProps {
+  variant?: 'transparent' | 'solid';
+}
+
+const Header = ({ variant = 'transparent' }: HeaderProps) => {
   const [isOrderOpen, setIsOrderOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -23,8 +27,11 @@ const Header = () => {
     }
   }, [])
 
+  const isTransparent = variant === 'transparent';
+  const isSolid = variant === 'solid';
+
   return (
-    <header className="absolute top-0 left-0 right-0 z-40">
+    <header className={`${isTransparent ? 'absolute' : 'relative'} top-0 left-0 right-0 z-40 ${isSolid ? 'bg-white shadow-sm border-b border-gray-100' : ''}`}>
       {/* Desktop Navigation */}
       <div className="hidden md:block">
         <div className="max-w-7xl mx-auto px-8 py-6">
@@ -36,25 +43,25 @@ const Header = () => {
             <nav className="flex items-center gap-10">
               <Link
                 href="/"
-                className="text-white/90 hover:text-white transition-colors duration-200 text-sm font-medium tracking-wide"
+                className={`${isTransparent ? 'text-white/90 hover:text-white' : 'text-gray-700 hover:text-gray-900'} transition-colors duration-200 text-sm font-medium tracking-wide`}
               >
                 Accueil
               </Link>
               <Link
-                href="/menu"
-                className="text-white/90 hover:text-white transition-colors duration-200 text-sm font-medium tracking-wide"
+                href="/notre-carte"
+                className={`${isTransparent ? 'text-white/90 hover:text-white' : 'text-gray-700 hover:text-gray-900'} transition-colors duration-200 text-sm font-medium tracking-wide`}
               >
                 Notre Carte
               </Link>
               <Link
                 href="/about"
-                className="text-white/90 hover:text-white transition-colors duration-200 text-sm font-medium tracking-wide"
+                className={`${isTransparent ? 'text-white/90 hover:text-white' : 'text-gray-700 hover:text-gray-900'} transition-colors duration-200 text-sm font-medium tracking-wide`}
               >
                 Notre Histoire
               </Link>
               <Link
                 href="/location"
-                className="text-white/90 hover:text-white transition-colors duration-200 text-sm font-medium tracking-wide"
+                className={`${isTransparent ? 'text-white/90 hover:text-white' : 'text-gray-700 hover:text-gray-900'} transition-colors duration-200 text-sm font-medium tracking-wide`}
               >
                 Nous Trouver
               </Link>
@@ -88,13 +95,17 @@ const Header = () => {
                     </div>
                     <div className="bg-primary/80">
                       <a
-                        href="#"
+                        href="https://www.ubereats.com/fr/store/pizza-le-duc-langon/knYx33kaXLSOSaJVs7XyRg"
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="block px-4 py-2 pl-9 text-xs text-white/80 hover:text-white hover:bg-white/5 transition-colors duration-150"
                       >
                         Langon
                       </a>
                       <a
-                        href="#"
+                        href="https://www.ubereats.com/fr/store/pizza-le-duc/ShfPBgd5WYG-0lAKLxIazQ"
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="block px-4 py-2 pl-9 text-xs text-white/80 hover:text-white hover:bg-white/5 transition-colors duration-150"
                       >
                         Podensac
@@ -109,14 +120,14 @@ const Header = () => {
       </div>
 
       {/* Mobile Navigation */}
-      <div className="md:hidden bg-black/30 backdrop-blur-md">
+      <div className={`md:hidden ${isTransparent ? 'bg-black/30 backdrop-blur-md' : 'bg-white border-b border-gray-100'}`}>
         <div className="px-4 py-4">
           <div className="flex items-center justify-between">
             <Logo />
 
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="text-white p-2"
+              className={`${isTransparent ? 'text-white' : 'text-gray-700'} p-2`}
               aria-label="Toggle menu"
             >
               {isMobileMenuOpen ? <FiX className="w-6 h-6" /> : <FiMenu className="w-6 h-6" />}
@@ -126,32 +137,32 @@ const Header = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="bg-black/95 backdrop-blur-md border-t border-white/10">
+          <div className={`${isTransparent ? 'bg-black/95 backdrop-blur-md border-t border-white/10' : 'bg-white border-t border-gray-100 shadow-lg'}`}>
             <nav className="px-4 py-6 flex flex-col gap-4">
               <Link
                 href="/"
-                className="text-white/90 hover:text-white transition-colors py-2 text-base"
+                className={`${isTransparent ? 'text-white/90 hover:text-white' : 'text-gray-700 hover:text-gray-900'} transition-colors py-2 text-base`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Accueil
               </Link>
               <Link
-                href="/menu"
-                className="text-white/90 hover:text-white transition-colors py-2 text-base"
+                href="/notre-carte"
+                className={`${isTransparent ? 'text-white/90 hover:text-white' : 'text-gray-700 hover:text-gray-900'} transition-colors py-2 text-base`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Notre Carte
               </Link>
               <Link
                 href="/about"
-                className="text-white/90 hover:text-white transition-colors py-2 text-base"
+                className={`${isTransparent ? 'text-white/90 hover:text-white' : 'text-gray-700 hover:text-gray-900'} transition-colors py-2 text-base`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Notre Histoire
               </Link>
               <Link
                 href="/location"
-                className="text-white/90 hover:text-white transition-colors py-2 text-base"
+                className={`${isTransparent ? 'text-white/90 hover:text-white' : 'text-gray-700 hover:text-gray-900'} transition-colors py-2 text-base`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Nous Trouver

@@ -13,6 +13,7 @@ const Footer: React.FC = () => {
     const fetchBusinessData = async () => {
       try {
         const data = await businessService.getAll();
+        
         // Assuming we get the first business or you can modify to get by ID
         if (data && data.length > 0) {
           setBusinessData(data[0]);
@@ -59,7 +60,7 @@ const Footer: React.FC = () => {
 
   if (loading) {
     return (
-      <footer className="bg-black text-white py-8">
+      <footer className="bg-black text-white py-8 pb-20 md:pb-8">
         <div className="max-w-7xl mx-auto px-8">
           <div className="animate-pulse">
             <div className="grid md:grid-cols-3 gap-8">
@@ -91,7 +92,7 @@ const Footer: React.FC = () => {
 
   if (!businessData) {
     return (
-      <footer className="bg-black text-white py-8">
+      <footer className="bg-black text-white py-8 pb-20 md:pb-8">
         <div className="max-w-7xl mx-auto px-8 text-center">
           <p className="text-white/50 text-sm">Informations de l&apos;entreprise non disponibles</p>
         </div>
@@ -100,7 +101,7 @@ const Footer: React.FC = () => {
   }
 
   return (
-    <footer className="bg-black text-white">
+    <footer className="bg-black text-white pb-20 md:pb-0">
       <div className="max-w-7xl mx-auto px-8 py-8">
         {/* Main Footer Content */}
         <div className="grid md:grid-cols-3 gap-8">
@@ -252,7 +253,7 @@ const Footer: React.FC = () => {
             <p className="text-white text-xs">
               Réalisé par{' '}
               <a
-                href="https://digitgrow.fr"
+                href="https://digitgrow.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary hover:text-primary/80 transition-colors"

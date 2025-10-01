@@ -5,6 +5,7 @@ import PizzaMoment from '@/components/pizza-moment/PizzaMoment';
 import EventsPromo from '@/components/events-promo/EventsPromo';
 import Footer from '@/components/footer/Footer';
 import FooterPreview from '@/components/footer/FooterPreview';
+import MobileBottomNav from '@/components/Header/MobileBottomNav';
 
 export default function Home() {
   return ( 
@@ -15,7 +16,8 @@ export default function Home() {
       <Annonce />
       <PizzaMoment />
       <EventsPromo />
-      <Footer />
+      <MobileBottomNav />
+      <Footer /> 
     </main>
   );
 }

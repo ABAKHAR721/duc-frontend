@@ -111,8 +111,8 @@ const PizzaMoment: React.FC = () => {
       <div className="max-w-5xl mx-auto px-8">
 
         {/* Header Section */}
-        <div className="text-center mb-16 relative">
-          <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full text-sm font-medium mb-6 relative overflow-hidden"
+        <div className="text-center mb-8 md:mb-16 relative">
+          <div className="inline-flex items-center gap-2 md:gap-3 px-4 md:px-6 py-2 md:py-3 rounded-full text-xs md:text-sm font-medium mb-4 md:mb-6 relative overflow-hidden"
                style={{
                  background: 'linear-gradient(135deg, var(--color-orange-100), var(--color-cream-200))',
                  color: 'var(--color-brown-800)',
@@ -122,13 +122,13 @@ const PizzaMoment: React.FC = () => {
             <span className="relative z-10 tracking-wide">✨ PIZZA DU MOMENT ✨</span>
           </div>
 
-          <h2 className="text-4xl md:text-6xl font-light mb-6 relative"
+          <h2 className="text-3xl md:text-4xl lg:text-6xl font-light mb-4 md:mb-6 relative px-4"
               style={{ color: 'var(--foreground)' }}>
             Création d&apos;Exception
-            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-24 h-0.5 bg-gradient-to-r from-primary to-secondary"></div>
+            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-16 md:w-24 h-0.5 bg-gradient-to-r from-primary to-secondary"></div>
           </h2>
 
-          <p className="text-xl max-w-3xl mx-auto font-light leading-relaxed"
+          <p className="text-base md:text-xl max-w-3xl mx-auto font-light leading-relaxed px-4"
              style={{ color: 'var(--muted-foreground)' }}>
             Découvrez nos pizzas artisanales, conçues avec passion et savoir-faire
           </p>
@@ -157,16 +157,16 @@ const PizzaMoment: React.FC = () => {
             </div>
 
             {/* Dynamic Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-80" />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-black/60" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-70" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-black/50" />
 
             {/* Floating Badge */}
             {isVegetarian(currentPizza) && (
-              <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full p-2">
+              <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm rounded-full p-2 shadow-lg z-10">
                 <img
                   src="/sans-viande.svg"
                   alt="Végétarien"
-                  className="w-16 h-16"
+                  className="w-12 h-12 md:w-16 md:h-16"
                 />
               </div>
             )}
@@ -175,17 +175,17 @@ const PizzaMoment: React.FC = () => {
             <div className="absolute inset-0 flex items-end">
               <div className="w-full p-8 lg:p-12">
                 <div className="max-w-6xl mx-auto">
-                  <div className="grid lg:grid-cols-2 gap-12 items-end">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-end">
 
                     {/* Left Side - Main Info */}
                     <div className="space-y-6">
                       {/* Badge */}
-                      <div className="flex items-center gap-3">
-                        <span className="px-3 py-1 rounded-full bg-orange-500/20 backdrop-blur-sm border border-orange-500/30 text-orange-400 text-xs font-semibold">
+                      <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-2">
+                        <span className="px-3 py-2 rounded-full bg-orange-500/30 backdrop-blur-md border border-orange-500/50 text-orange-300 text-xs font-semibold shadow-lg">
                           Pizza Exclusive
                         </span>
                         {isVegetarian(currentPizza) && (
-                          <span className="px-3 py-1 rounded-full bg-green-500/20 backdrop-blur-sm border border-green-500/30 text-green-400 text-xs font-semibold">
+                          <span className=" hidden lg:inline-flex px-3 py-2 rounded-full bg-green-500/30 backdrop-blur-md border border-green-500/50 text-green-300 text-xs font-semibold shadow-lg">
                             🌱 Végétarien
                           </span>
                         )}
@@ -193,19 +193,19 @@ const PizzaMoment: React.FC = () => {
 
                       {/* Title */}
                       <div>
-                        <h1 className="text-5xl lg:text-6xl font-bold text-white mb-3">
+                        <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white mb-3 md:mb-4 leading-tight drop-shadow-lg">
                           {currentPizza.name}
                         </h1>
-                        <p className="text-base text-white/90 leading-relaxed">
+                        <p className="text-sm md:text-base text-white/95 leading-relaxed max-w-md drop-shadow-md">
                           {currentPizza.description || "Une création unique qui éveillera vos papilles avec des saveurs authentiques et des ingrédients de qualité premium."}
                         </p>
                       </div>
 
                       {/* Stats */}
-                      <div className="flex items-center gap-6">
-                        <div className="flex items-center gap-2 text-gray-300">
-                          <Clock className="w-5 h-5" />
-                          <span>15-20 min</span>
+                      <div className="flex items-center gap-4 md:gap-6">
+                        <div className="flex items-center gap-2 text-white/90 drop-shadow-md">
+                          <Clock className="w-4 h-4 md:w-5 md:h-5" />
+                          <span className="text-sm md:text-base font-medium">15-20 min</span>
                         </div>
                       </div>
                     </div>
@@ -216,22 +216,26 @@ const PizzaMoment: React.FC = () => {
                         {/* Size Selection */}
                         {currentPizza.variants.length > 0 && (
                           <div>
-                            <label className="text-white text-sm font-medium mb-3 block">
+                            <label className="text-white text-sm font-semibold mb-4 block">
                               Choisissez votre taille
                             </label>
-                            <div className="grid grid-cols-3 gap-2">
+                            <div className="grid grid-cols-2 gap-3">
                               {currentPizza.variants.map((variant) => (
                                 <button
                                   key={variant.id}
                                   onClick={() => setSelectedVariant(variant.id || null)}
-                                  className="relative p-4 rounded-xl border transition-all duration-300 bg-white/5 backdrop-blur-md text-white border-white/20 hover:bg-white/10"
+                                  className={`relative p-4 rounded-xl border-2 transition-all duration-300 ${
+                                    selectedVariant === variant.id 
+                                      ? 'bg-orange-500/20 border-orange-400 text-white' 
+                                      : 'bg-white/10 border-white/30 text-white hover:bg-white/20'
+                                  }`}
                                 >
-                                  <div className="text-sm font-semibold">{variant.variantName}</div>
-                                  <div className="text-lg font-bold mt-2 text-orange-400">
+                                  <div className="text-sm font-semibold mb-1">{variant.variantName}</div>
+                                  <div className="text-lg font-bold text-orange-400">
                                     {variant.price.toFixed(2)}€
                                   </div>
                                   {selectedVariant === variant.id && (
-                                    <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-orange-500" />
+                                    <div className="absolute top-2 right-2 w-3 h-3 rounded-full bg-orange-500" />
                                   )}
                                 </button>
                               ))}
@@ -243,10 +247,10 @@ const PizzaMoment: React.FC = () => {
                         <div className="flex gap-3">
                           <button
                             onClick={() => openModal(currentPizza)}
-                            className="flex-1 py-3 px-5 rounded-lg font-medium transition-all duration-300 hover:opacity-90 flex items-center justify-center gap-2 text-white"
+                            className="flex-1 py-3 px-5 rounded-xl font-semibold transition-all duration-300 hover:opacity-90 flex items-center justify-center gap-2 text-white text-base shadow-lg"
                             style={{ background: 'var(--primary)' }}
                           >
-                            <Eye className="w-4 h-4" />
+                            <Eye className="w-5 h-5" />
                             <span>Voir détails</span>
                           </button>
                         </div>

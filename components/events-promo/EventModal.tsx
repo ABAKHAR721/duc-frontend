@@ -81,225 +81,263 @@ const EventModal: React.FC<EventModalProps> = ({ event, isOpen, onClose }) => {
 
   return (
     <div
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-300"
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl max-w-4xl w-full max-h-[95vh] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col"
+        className="rounded-3xl max-w-4xl w-full max-h-[90vh] shadow-2xl flex flex-col"
         onClick={(e: React.MouseEvent) => e.stopPropagation()}
+        style={{ background: 'var(--background)' }}
       >
         {/* Header */}
-        <div className="relative bg-white border-b border-gray-200 p-4 md:p-6 flex-shrink-0">
+        <div className="relative p-6 border-b flex-shrink-0" style={{ borderColor: 'var(--border)' }}>
           <button
             onClick={onClose}
-            className="absolute top-3 right-3 md:top-4 md:right-4 w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors text-gray-600"
+            className="absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center transition-colors hover:opacity-80"
+            style={{ 
+              backgroundColor: 'var(--muted)', 
+              color: 'var(--foreground)'
+            }}
           >
-            <X className="w-6 h-6" />
+            <X className="w-5 h-5" />
           </button>
-          
-          <div className="flex items-start gap-3 md:gap-4 mb-4 md:mb-6 pr-12">
-            <div className="w-12 h-12 md:w-14 md:h-14 bg-orange-100 rounded-xl flex items-center justify-center border border-orange-200 flex-shrink-0">
-              <Gift className="w-6 h-6 md:w-7 md:h-7 text-orange-600" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-2">
-                <span className="text-xs md:text-sm font-medium bg-orange-100 text-orange-700 px-2 md:px-3 py-1 rounded-lg border border-orange-200">
-                  {event.eventType || 'Promotion'}
-                </span>
-                {isEventActive() && (
-                  <div className="flex items-center gap-1 bg-green-100 text-green-700 px-2 md:px-3 py-1 rounded-lg border border-green-200">
-                    <div className="w-2 h-2 bg-green-500 rounded-full" />
-                    <span className="text-xs font-medium">Actif</span>
-                  </div>
-                )}
+
+          <div className="max-w-2xl">
+            <h2 className="text-3xl font-light mb-2" style={{ color: 'var(--foreground)' }}>
+              {event?.name || 'Événement'}
+            </h2>
+            <div className="flex items-center gap-4 text-sm" style={{ color: 'var(--muted-foreground)' }}>
+              <div className="flex items-center gap-2">
+                <Calendar className="w-4 h-4" />
+                <span>Promotion spéciale</span>
               </div>
-              <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 leading-tight">{event?.name || 'Événement'}</h2>
+              {isEventActive() && (
+                <span className="px-2 py-1 rounded-full text-xs" style={{ backgroundColor: 'var(--color-green-100)', color: 'var(--color-green-800)' }}>
+                  🎯 Actif
+                </span>
+              )}
             </div>
           </div>
 
           {/* Countdown Timer */}
           {timeLeft && (
-            <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-              <div className="flex items-center gap-2 mb-3">
-                <Timer className="w-5 h-5 text-orange-600" />
-                <span className="font-semibold text-gray-800">Temps restant</span>
+            <div className="mt-6 rounded-2xl p-6" style={{ backgroundColor: 'var(--muted)' }}>
+              <div className="flex items-center gap-2 mb-4">
+                <Timer className="w-5 h-5" style={{ color: 'var(--primary)' }} />
+                <span className="font-semibold" style={{ color: 'var(--foreground)' }}>Temps restant</span>
               </div>
-              <div className="grid grid-cols-4 gap-2 md:gap-3">
-                <div className="bg-white rounded-lg p-2 md:p-3 text-center border border-gray-200">
-                  <div className="text-lg md:text-2xl font-bold text-gray-900">{timeLeft.days}</div>
-                  <div className="text-xs text-gray-600 font-medium">Jours</div>
+              <div className="grid grid-cols-4 gap-3">
+                <div className="rounded-lg p-3 text-center" style={{ backgroundColor: 'var(--background)', border: '1px solid var(--border)' }}>
+                  <div className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}>{timeLeft.days}</div>
+                  <div className="text-xs font-medium" style={{ color: 'var(--muted-foreground)' }}>Jours</div>
                 </div>
-                <div className="bg-white rounded-lg p-2 md:p-3 text-center border border-gray-200">
-                  <div className="text-lg md:text-2xl font-bold text-gray-900">{timeLeft.hours}</div>
-                  <div className="text-xs text-gray-600 font-medium">Heures</div>
+                <div className="rounded-lg p-3 text-center" style={{ backgroundColor: 'var(--background)', border: '1px solid var(--border)' }}>
+                  <div className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}>{timeLeft.hours}</div>
+                  <div className="text-xs font-medium" style={{ color: 'var(--muted-foreground)' }}>Heures</div>
                 </div>
-                <div className="bg-white rounded-lg p-2 md:p-3 text-center border border-gray-200">
-                  <div className="text-lg md:text-2xl font-bold text-gray-900">{timeLeft.minutes}</div>
-                  <div className="text-xs text-gray-600 font-medium">Minutes</div>
+                <div className="rounded-lg p-3 text-center" style={{ backgroundColor: 'var(--background)', border: '1px solid var(--border)' }}>
+                  <div className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}>{timeLeft.minutes}</div>
+                  <div className="text-xs font-medium" style={{ color: 'var(--muted-foreground)' }}>Minutes</div>
                 </div>
-                <div className="bg-white rounded-lg p-2 md:p-3 text-center border border-gray-200">
-                  <div className="text-lg md:text-2xl font-bold text-gray-900">{timeLeft.seconds}</div>
-                  <div className="text-xs text-gray-600 font-medium">Secondes</div>
+                <div className="rounded-lg p-3 text-center" style={{ backgroundColor: 'var(--background)', border: '1px solid var(--border)' }}>
+                  <div className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}>{timeLeft.seconds}</div>
+                  <div className="text-xs font-medium" style={{ color: 'var(--muted-foreground)' }}>Secondes</div>
                 </div>
               </div>
             </div>
           )}
         </div>
 
-        <div className="flex-1 overflow-y-auto">
-          <div className="p-6 md:p-8 space-y-6 md:space-y-8">
-            {/* Event Image */}
-            {event.imageUrl && (
-              <div className="relative aspect-video rounded-xl overflow-hidden shadow-lg">
-                <img
-                  src={event.imageUrl}
-                  alt={event?.name || 'Événement'}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+        <div className="flex-1 overflow-y-auto min-h-0">
+          <div className="p-8">
+            <div className="grid lg:grid-cols-2 gap-8">
+              {/* Image Gallery */}
+              <div className="space-y-4">
+                <div className="relative aspect-square rounded-2xl overflow-hidden">
+                  <img
+                    src={event.imageUrl || '/placeholder-event.jpg'}
+                    alt={event?.name || 'Événement'}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                  
+                  {/* Event Status Badge */}
+                  {isEventActive() && (
+                    <div className="absolute top-4 right-4 backdrop-blur-sm rounded-full p-2" style={{ backgroundColor: 'var(--background)' }}>
+                      <div className="flex items-center gap-2" style={{ color: 'var(--color-green-600)' }}>
+                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                        <span className="text-sm font-medium">Actif</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
-            )}
 
-            {/* Event Details */}
-            <div className="grid lg:grid-cols-2 gap-6 lg:gap-8">
-              {/* Left Column */}
+              {/* Content Section */}
               <div className="space-y-6">
                 {/* Description */}
                 <div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-3 flex items-center gap-2">
-                    <Gift className="w-5 h-5 text-orange-600" />
+                  <h3 className="text-lg font-medium mb-3" style={{ color: 'var(--foreground)' }}>
                     Description
                   </h3>
-                  <p className="text-gray-600 leading-relaxed">
+                  <p className="leading-relaxed text-sm" style={{ color: 'var(--muted-foreground)' }}>
                     {event?.description || "Une promotion exceptionnelle vous attend ! Découvrez cette offre exclusive et profitez de conditions avantageuses pour savourer nos spécialités. Ne manquez pas cette opportunité limitée dans le temps."}
                   </p>
                 </div>
 
                 {/* Event Dates */}
                 <div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-3 flex items-center gap-2">
-                    <Calendar className="w-5 h-5 text-blue-600" />
-                    Dates de l'événement
-                  </h3>
-                  <div className="space-y-3">
-                    {event.startDate && (
-                      <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg border border-green-200">
-                        <div className="w-2 h-2 bg-green-500 rounded-full" />
-                        <div>
-                          <div className="font-medium text-green-800">Début</div>
-                          <div className="text-sm text-green-600">{formatDate(event.startDate)}</div>
-                        </div>
-                      </div>
-                    )}
-                    {event.endDate && (
-                      <div className="flex items-center gap-3 p-3 bg-red-50 rounded-lg border border-red-200">
-                        <div className="w-2 h-2 bg-red-500 rounded-full" />
-                        <div>
-                          <div className="font-medium text-red-800">Fin</div>
-                          <div className="text-sm text-red-600">{formatDate(event.endDate)}</div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column */}
-              <div className="space-y-6">
-                {/* Event Status */}
-                <div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-3 flex items-center gap-2">
-                    <Star className="w-5 h-5 text-yellow-600" />
-                    Statut
-                  </h3>
-                  <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full font-medium ${
-                    event.status === 'Active' 
-                      ? 'bg-green-100 text-green-800 border border-green-200' 
-                      : 'bg-gray-100 text-gray-800 border border-gray-200'
-                  }`}>
-                    <div className={`w-2 h-2 rounded-full ${
-                      event.status === 'Active' ? 'bg-green-500 animate-pulse' : 'bg-gray-400'
-                    }`} />
-                    {event.status || 'Actif'}
-                  </div>
-                </div>
-
-                {/* Location Info */}
-                <div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-3 flex items-center gap-2">
-                    <MapPin className="w-5 h-5 text-red-600" />
-                    Où profiter de cette offre
+                  <h3 className="text-lg font-medium mb-3" style={{ color: 'var(--foreground)' }}>
+                    Période de validité
                   </h3>
                   <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <Users className="w-4 h-4" />
-                      <span>Dans nos restaurants</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <Phone className="w-4 h-4" />
-                      <span>Par téléphone</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <Bike className="w-4 h-4" />
-                      <span>En livraison</span>
-                    </div>
+                    {event.startDate && (
+                      <button className="w-full p-4 rounded-xl border transition-all text-left border-green-200" style={{ backgroundColor: 'var(--color-green-50)' }}>
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <div className="font-medium" style={{ color: 'var(--color-green-800)' }}>
+                              Début de l'offre
+                            </div>
+                            <div className="text-sm" style={{ color: 'var(--color-green-600)' }}>
+                              {formatDate(event.startDate)}
+                            </div>
+                          </div>
+                          <Calendar className="w-5 h-5" style={{ color: 'var(--color-green-600)' }} />
+                        </div>
+                      </button>
+                    )}
+                    {event.endDate && (
+                      <button className="w-full p-4 rounded-xl border transition-all text-left border-red-200" style={{ backgroundColor: 'var(--color-red-50)' }}>
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <div className="font-medium" style={{ color: 'var(--color-red-800)' }}>
+                              Fin de l'offre
+                            </div>
+                            <div className="text-sm" style={{ color: 'var(--color-red-600)' }}>
+                              {formatDate(event.endDate)}
+                            </div>
+                          </div>
+                          <Clock className="w-5 h-5" style={{ color: 'var(--color-red-600)' }} />
+                        </div>
+                      </button>
+                    )}
                   </div>
                 </div>
 
-                {/* Action Section */}
-                <div className="bg-gradient-to-br from-orange-50 to-yellow-50 rounded-xl p-6 border border-orange-200">
-                  <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                    <Gift className="w-5 h-5 text-orange-600" />
-                    Profiter de l'offre
-                  </h3>
-                  
-                  <div className="relative" ref={menuRef}>
-                    <button
-                      onClick={() => setIsSubMenuOpen(!isSubMenuOpen)}
-                      className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 md:py-4 rounded-lg font-bold uppercase shadow-lg hover:from-orange-600 hover:to-red-600 transition-all duration-300 text-sm md:text-base"
-                    >
-                      <span className="flex items-center justify-center space-x-2">
-                        <Gift className="w-5 h-5" />
-                        <span>Commander maintenant</span>
-                      </span>
-                    </button>
-                    {isSubMenuOpen && (
-                      <div
-                        className={`absolute bottom-full mb-2 left-0 right-0 w-full bg-white rounded-md shadow-xl z-20 overflow-hidden border border-gray-200 ${
-                          isUberEatsOpen ? 'min-h-[110px]' : 'min-h-[77px]'
-                        }`}
-                      >
-                        <div className={`transition-transform duration-300 ease-in-out ${isUberEatsOpen ? '-translate-x-full' : 'translate-x-0'}`}>
-                          <div className="w-full flex-shrink-0" style={{ width: '100%' }}>
-                            <a href="tel:+33XXXXXXXXX" className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-orange-50">
-                              <Phone className="w-4 h-4 mr-2" />
-                              Commander par Téléphone
-                            </a>
-                            <button 
-                              onClick={handleUberEatsClick}
-                              className="w-full text-left flex items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-orange-50"
-                            >
-                              <div className="flex items-center">
-                                <Bike className="w-4 h-4 mr-2" />
-                                <span>Livraison avec Uber Eats</span>
-                              </div>
-                              <ChevronRight className="w-4 h-4" />
-                            </button>
-                          </div>
-                          <div className="absolute top-0 left-full w-full bg-white">
-                            <button 
-                              onClick={() => setIsUberEatsOpen(false)}
-                              className="w-full text-left flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-orange-50 font-bold"
-                            >
-                              <ChevronRight className="w-4 h-4 mr-2 transform rotate-180" />
-                              Retour
-                            </button>
-                            <a href="https://www.ubereats.com/fr/store/pizza-le-duc/ShfPBgd5WYG-0lAKLxIazQ" target="_blank" rel="noopener noreferrer" className="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50">UBER EAT PODENSAC</a>
-                            <a href="https://www.ubereats.com/fr/store/pizza-le-duc-langon/knYx33kaXLSOSaJVs7XyRg" target="_blank" rel="noopener noreferrer" className="block px-4 py-2 text-sm text-gray-700 hover:bg-orange-50">UBER EAT LANGON</a>
-                          </div>
+                {/* Event Type & Status */}
+                {(event.eventType || event.status) && (
+                  <div>
+                    <h3 className="text-lg font-medium mb-3" style={{ color: 'var(--foreground)' }}>Informations détaillées</h3>
+                    <div className="space-y-4">
+                      {event.eventType && (
+                        <div className="rounded-xl p-4" style={{ backgroundColor: 'var(--muted)' }}>
+                          <h4 className="font-medium mb-2 capitalize flex items-center gap-2" style={{ color: 'var(--foreground)' }}>
+                            <Gift className="w-4 h-4" style={{ color: 'var(--primary)' }} />
+                            Type d'événement
+                          </h4>
+                          <span
+                            className="px-3 py-1 rounded-full text-xs border"
+                            style={{
+                              backgroundColor: 'var(--background)',
+                              color: 'var(--muted-foreground)',
+                              borderColor: 'var(--border)'
+                            }}
+                          >
+                            {event.eventType}
+                          </span>
+                        </div>
+                      )}
+                      
+                      <div className="rounded-xl p-4" style={{ backgroundColor: 'var(--muted)' }}>
+                        <h4 className="font-medium mb-2 capitalize flex items-center gap-2" style={{ color: 'var(--foreground)' }}>
+                          <MapPin className="w-4 h-4" style={{ color: 'var(--primary)' }} />
+                          Disponibilité
+                        </h4>
+                        <div className="flex flex-wrap gap-2">
+                          <span className="px-3 py-1 rounded-full text-xs border" style={{ backgroundColor: 'var(--background)', color: 'var(--muted-foreground)', borderColor: 'var(--border)' }}>
+                            🏪 En restaurant
+                          </span>
+                          <span className="px-3 py-1 rounded-full text-xs border" style={{ backgroundColor: 'var(--background)', color: 'var(--muted-foreground)', borderColor: 'var(--border)' }}>
+                            📞 Par téléphone
+                          </span>
+                          <span className="px-3 py-1 rounded-full text-xs border" style={{ backgroundColor: 'var(--background)', color: 'var(--muted-foreground)', borderColor: 'var(--border)' }}>
+                            🚴 En livraison
+                          </span>
                         </div>
                       </div>
-                    )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Order Section */}
+                <div className="border-t pt-6" style={{ borderColor: 'var(--border)' }}>
+                  <div className="rounded-2xl p-6" style={{ backgroundColor: 'var(--muted)' }}>
+                    <h3 className="text-lg font-medium mb-4" style={{ color: 'var(--foreground)' }}>
+                      Profiter de cette offre
+                    </h3>
+
+                    <div className="relative" ref={menuRef}>
+                      <div className="space-y-2 transition-all duration-300 ease-in-out">
+                        {!isSubMenuOpen ? (
+                          <button
+                            onClick={() => setIsSubMenuOpen(true)}
+                            className="w-full py-3 px-4 rounded-xl font-medium transition-all hover:opacity-90 flex items-center justify-center gap-2 text-white"
+                            style={{ background: 'var(--primary)' }}
+                          >
+                            <span>Commander maintenant</span>
+                          </button>
+                        ) : (
+                          <div className="space-y-2">
+                            <a
+                              href="tel:+33XXXXXXXXX"
+                              className="w-full py-3 px-4 rounded-xl font-medium transition-all hover:opacity-90 flex items-center justify-center gap-2 text-white"
+                              style={{ background: 'var(--primary)' }}
+                            >
+                              <Phone className="w-4 h-4" />
+                              <span>Appeler</span>
+                            </a>
+                            <button
+                              onClick={() => setIsUberEatsOpen(!isUberEatsOpen)}
+                              className="w-full py-3 px-4 rounded-xl font-medium transition-all hover:opacity-90 flex items-center justify-center gap-2 text-white"
+                              style={{ background: 'var(--primary)' }}
+                            >
+                              <Bike className="w-4 h-4" />
+                              <span>Uber Eats</span>
+                              <ChevronRight
+                                className={`w-4 h-4 transition-transform duration-200 ${isUberEatsOpen ? 'rotate-90' : ''}`}
+                              />
+                            </button>
+
+                            <div
+                              className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                                isUberEatsOpen ? 'max-h-32 opacity-100' : 'max-h-0 opacity-0'
+                              }`}
+                            >
+                              <div className="space-y-1 pt-1">
+                                <a
+                                  href="https://www.ubereats.com/fr/store/pizza-le-duc/ShfPBgd5WYG-0lAKLxIazQ"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="block w-full py-2 px-4 text-sm rounded-lg transition-colors hover:opacity-80"
+                                  style={{ color: 'var(--foreground)', backgroundColor: 'var(--muted)' }}
+                                >
+                                  📍 PODENSAC
+                                </a>
+                                <a
+                                  href="https://www.ubereats.com/fr/store/pizza-le-duc-langon/knYx33kaXLSOSaJVs7XyRg"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="block w-full py-2 px-4 text-sm rounded-lg transition-colors hover:opacity-80"
+                                  style={{ color: 'var(--foreground)', backgroundColor: 'var(--muted)' }}
+                                >
+                                  📍 LANGON
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

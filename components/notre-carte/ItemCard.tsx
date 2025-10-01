@@ -79,15 +79,15 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onCustomize, onOrder }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 relative">
+    <div className="group bg-white/95 backdrop-blur-md rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-white/20 relative">
       {/* Vegetarian badge - positioned absolutely */}
       {isVegetarian && (
-        <div className="absolute top-3 right-3 z-10">
-          <div className="bg-white/90 backdrop-blur-sm rounded-full p-2">
+        <div className="absolute top-4 right-4 z-10">
+          <div className="bg-white/95 backdrop-blur-sm rounded-full p-2 shadow-lg border border-green-200">
             <img 
               src="/sans-viande.svg" 
               alt="Végétarien" 
-              className="w-12 h-12"
+              className="w-8 h-8"
             />
           </div>
         </div>
@@ -95,59 +95,62 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onCustomize, onOrder }) => {
 
       {/* Item Image */}
       {defaultImage && (
-        <div className="h-48 bg-gray-200 overflow-hidden">
+        <div className="relative h-48 bg-gradient-to-br from-orange-100 to-red-100 overflow-hidden">
           <img 
             src={defaultImage} 
             alt={item.name}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         </div>
       )}
 
       {/* Item Content */}
-      <div className="p-4">
+      <div className="p-6">
         {/* Item Name */}
-        <div className="mb-2">
-          <h3 className="text-lg font-bold text-green-800">
+        <div className="mb-3">
+          <h3 className="text-lg md:text-xl font-bold leading-tight" style={{ color: 'var(--foreground)' }}>
             {item.name}
           </h3>
         </div>
 
         {/* Description */}
-        <div className="text-sm text-gray-600 mb-3">
+        <div className="text-sm mb-4" style={{ color: 'var(--muted-foreground)' }}>
           {item.description && (
-            <p className="mb-1">{item.description}</p>
+            <p className="mb-2 leading-relaxed">{item.description}</p>
           )}
           {baseDescription && (
-            <p className="text-gray-700">{baseDescription}</p>
+            <p className="text-orange-600 font-medium">{baseDescription}</p>
           )}
         </div>
 
-        {/* Allergens link */}
+        {/* Allergens button */}
         {hasAllergens && (
           <button 
             onClick={() => setShowAllergens(true)}
-            className="text-blue-600 text-sm underline hover:text-blue-800 transition-colors mb-3"
+            className="inline-flex items-center gap-2 text-red-700 text-sm font-semibold hover:text-red-800 transition-all duration-300 mb-3 bg-red-100 hover:bg-red-200 px-4 py-2 rounded-xl border-2 border-red-200 hover:border-red-300 shadow-sm hover:shadow-md transform hover:scale-105"
           >
-            Allergènes
+            <span className="text-base">⚠️</span>
+            <span>Voir les allergènes</span>
           </button>
         )}
 
-        {/* Customization option */}
+        {/* Customization button */}
         {item.variants && item.variants.length > 1 && (
-          <div className="mb-3">
+          <div className="mb-4">
             <button
               onClick={onCustomize}
-              className="text-orange-500 text-sm hover:text-orange-600 transition-colors"
+              className="inline-flex items-center gap-2 text-orange-700 text-sm font-semibold hover:text-orange-800 transition-all duration-300 bg-orange-100 hover:bg-orange-200 px-4 py-2 rounded-xl border-2 border-orange-200 hover:border-orange-300 shadow-sm hover:shadow-md transform hover:scale-105"
             >
-              Je modifie ma recette
+              <span className="text-base">🎨</span>
+              <span>Personnaliser ma pizza</span>
             </button>
           </div>
         )}
 
         {/* Price and Add button */}
-        <div className="flex items-center justify-between">
-          <div className="text-xl font-bold text-gray-800">
+        <div className="flex items-center justify-between mb-4">
+          <div className="text-xl md:text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
             {getPriceRange()}
           </div>
           
@@ -155,35 +158,35 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onCustomize, onOrder }) => {
             onClick={() => onOrder(defaultVariant)}
             disabled={!isAvailable}
             className={`
-              px-6 py-2 rounded-full font-medium transition-colors
+              px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg
               ${isAvailable 
-                ? 'bg-red-700 text-white hover:bg-red-800' 
+                ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white hover:from-orange-600 hover:to-red-600 hover:shadow-xl' 
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
               }
             `}
           >
-            {isAvailable ? 'AJOUTER' : 'AJOUTER'}
+            {isAvailable ? 'AJOUTER' : 'INDISPONIBLE'}
           </button>
         </div>
 
         {/* Size selection for items with variants */}
         {item.options?.find(opt => opt.optionType === 'BASE') && item.variants.length > 1 && (
-          <div className="mt-3 pt-3 border-t border-gray-200">
-            <p className="text-xs text-gray-500 mb-2">Je choisis ma base</p>
-            <div className="flex gap-2">
+          <div className="pt-4 border-t border-gray-100">
+            <p className="text-xs font-medium mb-3" style={{ color: 'var(--muted-foreground)' }}>Tailles disponibles</p>
+            <div className="flex gap-2 flex-wrap">
               {item.variants.map((variant) => (
                 <button
                   key={variant.id}
                   onClick={() => onOrder(variant)}
                   className={`
-                    px-3 py-1 text-xs rounded-full border transition-colors
+                    px-4 py-2 text-xs rounded-full border-2 transition-all duration-300 font-medium
                     ${variant.variantName.includes('33 cm')
-                      ? 'bg-orange-500 text-white border-orange-500'
-                      : 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
+                      ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white border-orange-500 shadow-md'
+                      : 'bg-white text-gray-700 border-gray-200 hover:border-orange-300 hover:bg-orange-50'
                     }
                   `}
                 >
-                  {variant.variantName}
+                  {variant.variantName} - {variant.price.toFixed(2)}€
                 </button>
               ))}
             </div>
@@ -193,33 +196,36 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onCustomize, onOrder }) => {
 
       {/* Allergens Modal */}
       {showAllergens && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
-          <div className="bg-white/95 backdrop-blur-md rounded-xl shadow-2xl p-6 max-w-md w-full mx-4 border border-white/20">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-                <span className="text-red-500">⚠️</span>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-6 max-w-md w-full mx-4 border border-white/20">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-bold flex items-center gap-3" style={{ color: 'var(--foreground)' }}>
+                <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                  <span className="text-red-600 text-lg">⚠️</span>
+                </div>
                 Allergènes
               </h3>
               <button
                 onClick={() => setShowAllergens(false)}
-                className="text-gray-400 hover:text-gray-600 transition-colors p-1 hover:bg-gray-100 rounded-full"
+                className="w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors"
+                style={{ color: 'var(--muted-foreground)' }}
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-3 mb-6">
               {allergensList.map((allergen, index) => (
-                <div key={index} className="flex items-center space-x-3 p-2 bg-red-50 rounded-lg border-l-4 border-red-400">
-                  <div className="w-2 h-2 bg-red-500 rounded-full flex-shrink-0"></div>
-                  <span className="text-sm text-gray-800 font-medium">{allergen}</span>
+                <div key={index} className="flex items-center space-x-3 p-4 bg-gradient-to-r from-red-50 to-orange-50 rounded-xl border-l-4 border-red-400 shadow-sm">
+                  <div className="w-3 h-3 bg-red-500 rounded-full flex-shrink-0 animate-pulse"></div>
+                  <span className="text-sm font-medium" style={{ color: 'var(--foreground)' }}>{allergen}</span>
                 </div>
               ))}
             </div>
-            <div className="mt-4 pt-4 border-t border-gray-200">
-              <p className="text-xs text-gray-500 text-center">
-                Veuillez informer votre serveur de toute allergie alimentaire
+            <div className="pt-4 border-t border-gray-200">
+              <p className="text-xs text-center leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
+                ⚠️ Veuillez informer notre équipe de toute allergie alimentaire avant de commander
               </p>
             </div>
           </div>
