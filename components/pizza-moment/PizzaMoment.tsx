@@ -224,11 +224,7 @@ const PizzaMoment: React.FC = () => {
                                 <button
                                   key={variant.id}
                                   onClick={() => setSelectedVariant(variant.id || null)}
-                                  className={`relative p-4 rounded-xl border transition-all duration-300 ${
-                                    selectedVariant === variant.id
-                                      ? 'bg-white/5 backdrop-blur-md text-white border-white'
-                                      : 'bg-white/5 backdrop-blur-md text-white border-white/20 hover:bg-white/10'
-                                  }`}
+                                  className="relative p-4 rounded-xl border transition-all duration-300 bg-white/5 backdrop-blur-md text-white border-white/20 hover:bg-white/10"
                                 >
                                   <div className="text-sm font-semibold">{variant.variantName}</div>
                                   <div className="text-lg font-bold mt-2 text-orange-400">
