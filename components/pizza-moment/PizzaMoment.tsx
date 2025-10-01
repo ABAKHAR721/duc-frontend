@@ -227,7 +227,7 @@ const PizzaMoment: React.FC = () => {
                                   className={`relative p-4 rounded-xl border transition-all duration-300 ${
                                     selectedVariant === variant.id
                                       ? 'bg-white text-gray-900 border-white'
-                                      : 'bg-white/5 text-white border-white/20 hover:bg-white/10'
+                                      : 'bg-white/5 backdrop-blur-sm text-white border-white/20 hover:bg-white/10 hover:backdrop-blur-md'
                                   }`}
                                 >
                                   <div className="text-sm font-semibold">{variant.variantName}</div>
