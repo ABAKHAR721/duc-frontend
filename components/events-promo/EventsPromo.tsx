@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Calendar, Clock, Gift, Eye, Timer, Phone, Bike } from 'lucide-react';
+import { SiUbereats } from 'react-icons/si';
+import { FiPhone } from 'react-icons/fi';
 import { eventsService, EventData } from '@/services/eventsService';
 import EventModal from './EventModal';
 
@@ -15,7 +17,6 @@ const EventsPromo: React.FC = () => {
   const [isEventHovered, setIsEventHovered] = useState(false);
   const [timeLeft, setTimeLeft] = useState<{[key: string]: {days: number, hours: number, minutes: number, seconds: number}}>({});
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
-  const [isUberEatsOpen, setIsUberEatsOpen] = useState(false);
 
   useEffect(() => {
     const fetchPromoEvents = async () => {
@@ -238,46 +239,24 @@ const EventsPromo: React.FC = () => {
                   <div className="rounded-lg overflow-hidden border" style={{ backgroundColor: 'var(--background)', borderColor: 'var(--border)' }}>
                     <a 
                       href="tel:+33XXXXXXXXX" 
-                      className="flex items-center px-4 py-3 text-sm border-b hover:opacity-80 transition-opacity"
-                      style={{ color: 'var(--foreground)', borderColor: 'var(--border)' }}
+                      className="flex items-center px-4 py-3 text-sm border-b hover:opacity-80 transition-opacity text-white rounded-lg mb-2"
+                      style={{ backgroundColor: '#22c55e' }}
                     >
-                      <Phone className="w-4 h-4 mr-3" />
+                      <FiPhone className="w-4 h-4 mr-3" />
                       Commander par Téléphone
                     </a>
-                    <button 
-                      onClick={() => setIsUberEatsOpen(!isUberEatsOpen)}
-                      className="w-full text-left flex items-center justify-between px-4 py-3 text-sm hover:opacity-80 transition-opacity"
-                      style={{ color: 'var(--foreground)' }}
+                    <a 
+                      href="https://www.ubereats.com/fr/store/pizza-le-duc/ShfPBgd5WYG-0lAKLxIazQ"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full text-left flex items-center justify-center px-4 py-3 text-sm hover:opacity-80 transition-opacity text-white rounded-lg"
+                      style={{ backgroundColor: '#000000' }}
                     >
                       <div className="flex items-center">
-                        <Bike className="w-4 h-4 mr-3" />
+                        <SiUbereats className="w-4 h-4 mr-3" />
                         <span>Livraison Uber Eats</span>
                       </div>
-                      <ChevronRight className={`w-4 h-4 transition-transform ${isUberEatsOpen ? 'rotate-90' : ''}`} />
-                    </button>
-                    
-                    {isUberEatsOpen && (
-                      <div className="border-t space-y-1 p-2" style={{ borderColor: 'var(--border)' }}>
-                        <a
-                          href="https://www.ubereats.com/fr/store/pizza-le-duc/ShfPBgd5WYG-0lAKLxIazQ"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="block w-full py-2 px-3 text-sm rounded hover:opacity-80 transition-opacity"
-                          style={{ color: 'var(--foreground)', backgroundColor: 'var(--muted)' }}
-                        >
-                          📍 PODENSAC
-                        </a>
-                        <a
-                          href="https://www.ubereats.com/fr/store/pizza-le-duc-langon/knYx33kaXLSOSaJVs7XyRg"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="block w-full py-2 px-3 text-sm rounded hover:opacity-80 transition-opacity"
-                          style={{ color: 'var(--foreground)', backgroundColor: 'var(--muted)' }}
-                        >
-                          📍 LANGON
-                        </a>
-                      </div>
-                    )}
+                    </a>
                   </div>
                 )}
               </div>
@@ -406,33 +385,24 @@ const EventsPromo: React.FC = () => {
                             </button>
                             {isSubMenuOpen && (
                               <div className="absolute bottom-full mb-2 left-0 right-0 bg-white rounded-lg shadow-xl z-20 overflow-hidden border border-gray-200 min-w-[250px]">
-                                <div className={`transition-transform duration-300 ease-in-out ${isUberEatsOpen ? '-translate-x-full' : 'translate-x-0'}`}>
+                                <div className="transition-transform duration-300 ease-in-out">
                                   <div className="w-full">
-                                    <a href="tel:+33XXXXXXXXX" className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 border-b border-gray-100">
-                                      <Phone className="w-4 h-4 mr-3" />
+                                    <a href="tel:+33XXXXXXXXX" className="flex items-center px-4 py-3 text-sm text-white hover:bg-green-600 border-b border-gray-100" style={{ backgroundColor: '#22c55e' }}>
+                                      <FiPhone className="w-4 h-4 mr-3" />
                                       Commander par Téléphone
                                     </a>
-                                    <button 
-                                      onClick={() => setIsUberEatsOpen(true)}
-                                      className="w-full text-left flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-orange-50"
+                                    <a 
+                                      href="https://www.ubereats.com/fr/store/pizza-le-duc/ShfPBgd5WYG-0lAKLxIazQ"
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="w-full text-left flex items-center justify-center px-4 py-3 text-sm text-white hover:bg-gray-800"
+                                      style={{ backgroundColor: '#000000' }}
                                     >
                                       <div className="flex items-center">
-                                        <Bike className="w-4 h-4 mr-3" />
+                                        <SiUbereats className="w-4 h-4 mr-3" />
                                         <span>Livraison avec Uber Eats</span>
                                       </div>
-                                      <ChevronRight className="w-4 h-4" />
-                                    </button>
-                                  </div>
-                                  <div className="absolute top-0 left-full w-full bg-white">
-                                    <button 
-                                      onClick={() => setIsUberEatsOpen(false)}
-                                      className="w-full text-left flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 font-medium border-b border-gray-100"
-                                    >
-                                      <ChevronRight className="w-4 h-4 mr-3 transform rotate-180" />
-                                      Retour
-                                    </button>
-                                    <a href="https://www.ubereats.com/fr/store/pizza-le-duc/ShfPBgd5WYG-0lAKLxIazQ" target="_blank" rel="noopener noreferrer" className="block px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 border-b border-gray-100">UBER EAT PODENSAC</a>
-                                    <a href="https://www.ubereats.com/fr/store/pizza-le-duc-langon/knYx33kaXLSOSaJVs7XyRg" target="_blank" rel="noopener noreferrer" className="block px-4 py-3 text-sm text-gray-700 hover:bg-orange-50">UBER EAT LANGON</a>
+                                    </a>
                                   </div>
                                 </div>
                               </div>

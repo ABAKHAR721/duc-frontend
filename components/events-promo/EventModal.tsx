@@ -2,6 +2,8 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { X, Calendar, Clock, Gift, Star, MapPin, Users, Phone, Bike, ChevronRight, Timer } from 'lucide-react';
+import { SiUbereats } from 'react-icons/si';
+import { FiPhone } from 'react-icons/fi';
 import { EventData } from '@/services/eventsService';
 
 interface EventModalProps {
@@ -12,7 +14,6 @@ interface EventModalProps {
 
 const EventModal: React.FC<EventModalProps> = ({ event, isOpen, onClose }) => {
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
-  const [isUberEatsOpen, setIsUberEatsOpen] = useState(false);
   const [timeLeft, setTimeLeft] = useState<{days: number, hours: number, minutes: number, seconds: number} | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -20,7 +21,6 @@ const EventModal: React.FC<EventModalProps> = ({ event, isOpen, onClose }) => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setIsSubMenuOpen(false);
-        setIsUberEatsOpen(false);
       }
     };
 
@@ -54,9 +54,6 @@ const EventModal: React.FC<EventModalProps> = ({ event, isOpen, onClose }) => {
     return () => clearInterval(timer);
   }, [event.endDate]);
 
-  const handleUberEatsClick = () => {
-    setIsUberEatsOpen(true);
-  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('fr-FR', {
@@ -291,49 +288,21 @@ const EventModal: React.FC<EventModalProps> = ({ event, isOpen, onClose }) => {
                             <a
                               href="tel:+33XXXXXXXXX"
                               className="w-full py-3 px-4 rounded-xl font-medium transition-all hover:opacity-90 flex items-center justify-center gap-2 text-white"
-                              style={{ background: 'var(--primary)' }}
+                              style={{ background: '#22c55e' }}
                             >
-                              <Phone className="w-4 h-4" />
+                              <FiPhone className="w-4 h-4" />
                               <span>Appeler</span>
                             </a>
-                            <button
-                              onClick={() => setIsUberEatsOpen(!isUberEatsOpen)}
+                            <a
+                              href="https://www.ubereats.com/fr/store/pizza-le-duc/ShfPBgd5WYG-0lAKLxIazQ"
+                              target="_blank"
+                              rel="noopener noreferrer"
                               className="w-full py-3 px-4 rounded-xl font-medium transition-all hover:opacity-90 flex items-center justify-center gap-2 text-white"
-                              style={{ background: 'var(--primary)' }}
+                              style={{ background: '#000000' }}
                             >
-                              <Bike className="w-4 h-4" />
+                              <SiUbereats className="w-4 h-4" />
                               <span>Uber Eats</span>
-                              <ChevronRight
-                                className={`w-4 h-4 transition-transform duration-200 ${isUberEatsOpen ? 'rotate-90' : ''}`}
-                              />
-                            </button>
-
-                            <div
-                              className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                                isUberEatsOpen ? 'max-h-32 opacity-100' : 'max-h-0 opacity-0'
-                              }`}
-                            >
-                              <div className="space-y-1 pt-1">
-                                <a
-                                  href="https://www.ubereats.com/fr/store/pizza-le-duc/ShfPBgd5WYG-0lAKLxIazQ"
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="block w-full py-2 px-4 text-sm rounded-lg transition-colors hover:opacity-80"
-                                  style={{ color: 'var(--foreground)', backgroundColor: 'var(--muted)' }}
-                                >
-                                  📍 PODENSAC
-                                </a>
-                                <a
-                                  href="https://www.ubereats.com/fr/store/pizza-le-duc-langon/knYx33kaXLSOSaJVs7XyRg"
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="block w-full py-2 px-4 text-sm rounded-lg transition-colors hover:opacity-80"
-                                  style={{ color: 'var(--foreground)', backgroundColor: 'var(--muted)' }}
-                                >
-                                  📍 LANGON
-                                </a>
-                              </div>
-                            </div>
+                            </a>
                           </div>
                         )}
                       </div>

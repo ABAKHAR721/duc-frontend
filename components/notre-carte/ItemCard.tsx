@@ -7,9 +7,10 @@ interface ItemCardProps {
   item: ItemData;
   onCustomize: () => void;
   onOrder: (variant?: ItemVariant) => void;
+  selectedSize?: string;
 }
 
-const ItemCard: React.FC<ItemCardProps> = ({ item, onCustomize, onOrder }) => {
+const ItemCard: React.FC<ItemCardProps> = ({ item, onCustomize, onOrder, selectedSize }) => {
   const [showAllergens, setShowAllergens] = useState(false);
   // Get the default variant or first variant for pricing
   const defaultVariant = item.variants?.find(v => v.variantName.includes('33 cm')) || item.variants?.[0];
@@ -57,12 +58,21 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onCustomize, onOrder }) => {
   // Get default image
   const defaultImage = item.images?.find(img => img.isDefault)?.imageUrl || item.images?.[0]?.imageUrl;
 
-  // Calculate price range from variants
-  const getPriceRange = () => {
+  // Calculate price based on selected size or show range
+  const getDisplayPrice = () => {
     if (!item.variants || item.variants.length === 0) {
       return 'Prix sur demande';
     }
     
+    // If a size is selected, show price for that specific variant
+    if (selectedSize) {
+      const selectedVariant = item.variants.find(variant => variant.variantName === selectedSize);
+      if (selectedVariant) {
+        return `${selectedVariant.price.toFixed(2)} €`;
+      }
+    }
+    
+    // If no size selected or variant not found, show price range
     if (item.variants.length === 1) {
       return `${item.variants[0].price.toFixed(2)} €`;
     }
@@ -120,7 +130,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onCustomize, onOrder }) => {
             <p className="mb-2 leading-relaxed">{item.description}</p>
           )}
           {baseDescription && (
-            <p className="text-orange-600 font-medium">{baseDescription}</p>
+            <p className="text-orange-600 font-medium">base : {baseDescription}</p>
           )}
         </div>
 
@@ -151,48 +161,11 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onCustomize, onOrder }) => {
         {/* Price and Add button */}
         <div className="flex items-center justify-between mb-4">
           <div className="text-xl md:text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
-            {getPriceRange()}
+            {getDisplayPrice()}
           </div>
-          
-          <button
-            onClick={() => onOrder(defaultVariant)}
-            disabled={!isAvailable}
-            className={`
-              px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg
-              ${isAvailable 
-                ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white hover:from-orange-600 hover:to-red-600 hover:shadow-xl' 
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              }
-            `}
-          >
-            {isAvailable ? 'AJOUTER' : 'INDISPONIBLE'}
-          </button>
         </div>
-
-        {/* Size selection for items with variants */}
-        {item.options?.find(opt => opt.optionType === 'BASE') && item.variants.length > 1 && (
-          <div className="pt-4 border-t border-gray-100">
-            <p className="text-xs font-medium mb-3" style={{ color: 'var(--muted-foreground)' }}>Tailles disponibles</p>
-            <div className="flex gap-2 flex-wrap">
-              {item.variants.map((variant) => (
-                <button
-                  key={variant.id}
-                  onClick={() => onOrder(variant)}
-                  className={`
-                    px-4 py-2 text-xs rounded-full border-2 transition-all duration-300 font-medium
-                    ${variant.variantName.includes('33 cm')
-                      ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white border-orange-500 shadow-md'
-                      : 'bg-white text-gray-700 border-gray-200 hover:border-orange-300 hover:bg-orange-50'
-                    }
-                  `}
-                >
-                  {variant.variantName} - {variant.price.toFixed(2)}€
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
+      
 
       {/* Allergens Modal */}
       {showAllergens && (

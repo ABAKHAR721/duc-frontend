@@ -32,13 +32,13 @@ const Annonce = () => {
     const scrollingText = annonces.length > 0 ? annonces.map((annonce) => annonce.description).join('   •   ') : '';
 
   return (
-    <div className="bg-primary text-white py-3 overflow-hidden">
+    <div className="py-3 overflow-hidden" style={{ backgroundColor: '#f09e11', color: 'white' }}>
       {scrollingText && (
         <div className="duc-marquee-track" key={animationKey}>
-          <span className="font-light text-sm mx-8">{scrollingText}</span>
-          <span className="font-light text-sm mx-8" aria-hidden="true">{scrollingText}</span>
-          <span className="font-light text-sm mx-8" aria-hidden="true">{scrollingText}</span>
-          <span className="font-light text-sm mx-8" aria-hidden="true">{scrollingText}</span>
+          <span className="font-bold text-sm mx-8">{scrollingText}</span>
+          <span className="font-bold text-sm mx-8" aria-hidden="true">{scrollingText}</span>
+          <span className="font-bold text-sm mx-8" aria-hidden="true">{scrollingText}</span>
+          <span className="font-bold text-sm mx-8" aria-hidden="true">{scrollingText}</span>
         </div>
       )}
       <style jsx global>{`

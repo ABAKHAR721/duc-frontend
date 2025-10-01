@@ -85,13 +85,12 @@ const Navbar = () => {
               <div className="absolute top-0 left-full w-full bg-white">
                 <button 
                   onClick={() => setIsUberEatsOpen(false)}
-                  className="w-full text-left flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-yellow-400 font-bold"
+                  className="w-full text-left flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-green-400 font-bold"
                 >
                   <ChevronRight className="w-4 h-4 mr-2 transform rotate-180" />
                   Retour
                 </button>
                 <a href="https://www.ubereats.com/fr/store/pizza-le-duc/ShfPBgd5WYG-0lAKLxIazQ" target="_blank" rel="noopener noreferrer" className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-400">UBER EAT PODENSAC</a>
-                <a href="https://www.ubereats.com/fr/store/pizza-le-duc-langon/knYx33kaXLSOSaJVs7XyRg" target="_blank" rel="noopener noreferrer" className="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-400">UBER EAT LANGON</a>
               </div>
             </div>
           </div>

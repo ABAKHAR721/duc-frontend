@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
-import { FiMenu, FiX, FiChevronDown, FiChevronRight } from "react-icons/fi"
+import { FiMenu, FiX, FiChevronDown, FiChevronRight, FiPhone } from "react-icons/fi"
+import { SiUbereats } from "react-icons/si"
 import Logo from "./Logo"
 
 interface HeaderProps {
@@ -82,36 +83,20 @@ const Header = ({ variant = 'transparent' }: HeaderProps) => {
                 <div className={`absolute top-full left-0 right-0 mt-1 bg-primary rounded-lg shadow-lg overflow-hidden transition-all duration-300 origin-top ${isOrderOpen ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0 pointer-events-none'}`}>
                   <a
                     href="tel:+33123456789"
-                    className="block px-4 py-2.5 text-white/90 hover:text-white hover:bg-white/10 transition-colors duration-150 border-b border-white/20 text-xs"
+                    className="flex items-center gap-3 px-4 py-2.5 text-white/90 hover:text-white hover:bg-white/10 transition-colors duration-150 border-b border-white/20 text-xs"
                   >
+                    <FiPhone className="w-4 h-4" />
                     Par Téléphone
                   </a>
-
-                  {/* Uber Eats with sub-options */}
-                  <div className="border-b border-white/20">
-                    <div className="flex items-center gap-2 px-4 py-2.5 text-white/90 text-xs">
-                      <FiChevronRight className="w-3 h-3" />
-                      <span>Par Uber Eats</span>
-                    </div>
-                    <div className="bg-primary/80">
-                      <a
-                        href="https://www.ubereats.com/fr/store/pizza-le-duc-langon/knYx33kaXLSOSaJVs7XyRg"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block px-4 py-2 pl-9 text-xs text-white/80 hover:text-white hover:bg-white/5 transition-colors duration-150"
-                      >
-                        Langon
-                      </a>
-                      <a
-                        href="https://www.ubereats.com/fr/store/pizza-le-duc/ShfPBgd5WYG-0lAKLxIazQ"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block px-4 py-2 pl-9 text-xs text-white/80 hover:text-white hover:bg-white/5 transition-colors duration-150"
-                      >
-                        Podensac
-                      </a>
-                    </div>
-                  </div>
+                  <a
+                    href="https://www.ubereats.com/fr/store/pizza-le-duc/ShfPBgd5WYG-0lAKLxIazQ"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 px-4 py-2.5 text-white bg-black hover:bg-gray-900 transition-colors duration-150 border-b border-white/20 text-xs"
+                  >
+                    <SiUbereats className="w-8 h-8" />
+                    Par UberEat
+                  </a>
                 </div>
               </div>
             </nav>

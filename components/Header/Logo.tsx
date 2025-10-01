@@ -8,16 +8,16 @@ const Logo = () => {
         <img
           src="/logo-without-bg.png"
           alt="Le Duc Pizzeria"
-          className="h-10 w-10 md:h-12 md:w-12 object-contain transition-transform duration-300 group-hover:scale-105"
+          className="h-15 w-15 md:h-12 md:w-12 object-contain transition-transform duration-300 group-hover:scale-105"
         />
       </div>
 
       {/* Brand Text */}
       <div className="flex flex-col">
         <span className="font-serif italic text-lg md:text-xl text-white transition-colors duration-300">
-          Le Duc
+          Pizza
         </span>
-        <span className="text-[10px] md:text-xs text-white/70 font-light tracking-[0.2em] uppercase">Pizzeria</span>
+        <span className="text-[10px] md:text-xs text-white/70 font-light tracking-[0.2em] uppercase">Le Duc</span>
       </div>
     </Link>
   )

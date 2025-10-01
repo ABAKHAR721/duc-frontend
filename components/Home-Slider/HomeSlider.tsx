@@ -1,7 +1,8 @@
 "use client"
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi"
+import { FiChevronLeft, FiChevronRight, FiPhone } from "react-icons/fi"
+import { SiUbereats } from "react-icons/si"
 
 const HeroSlider = () => {
   const [currentSlide, setCurrentSlide] = useState(0)
@@ -23,8 +24,7 @@ const HeroSlider = () => {
       subtitle: "Commandez vos pizzas préférées avec Uber Eats",
       showButtons: true,
       buttons: [
-        { text: "Uber Eats Langon", link: "#" },
-        { text: "Uber Eats Podensac", link: "#" }
+        { text: "Uber Eats", link: "https://www.ubereats.com/fr/store/pizza-le-duc/ShfPBgd5WYG-0lAKLxIazQ" }
       ],
       showHours: false
     },
@@ -35,6 +35,7 @@ const HeroSlider = () => {
       subtitle: "Pizzas à emporter • Commandes sur place",
       buttonText: "Commander",
       buttonLink: "tel:+33123456789",
+      buttonIcon: <FiPhone className="w-4 h-4" />,
       showHours: true
     }
   ]
@@ -86,8 +87,9 @@ const HeroSlider = () => {
                 <div className="flex items-center justify-center mt-8">
                   <Link
                     href={slide.buttonLink}
-                    className="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded text-sm font-light tracking-wide transition-all duration-200"
+                    className={`${slide.buttonLink.startsWith('tel:') ? 'bg-green-500 hover:bg-green-600' : 'bg-primary hover:bg-primary/90'} text-white px-6 py-2 rounded text-sm font-light tracking-wide transition-all duration-200 flex items-center gap-2`}
                   >
+                    {slide.buttonIcon}
                     {slide.buttonText}
                   </Link>
                 </div>
@@ -100,8 +102,9 @@ const HeroSlider = () => {
                     <Link
                       key={btnIndex}
                       href={button.link}
-                      className="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded text-sm font-light tracking-wide transition-all duration-200"
+                      className="bg-black hover:bg-gray-900 text-white px-6 py-2 rounded text-sm font-light tracking-wide transition-all duration-200 flex items-center gap-3"
                     >
+                      <SiUbereats className="w-6 h-6" />
                       {button.text}
                     </Link>
                   ))}

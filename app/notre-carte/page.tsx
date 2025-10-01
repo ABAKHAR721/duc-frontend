@@ -222,10 +222,9 @@ const NotreCarte: React.FC = () => {
               Notre Carte
               <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-16 md:w-24 h-0.5 bg-gradient-to-r from-white to-white/50"></div>
             </h1>
-            
-            <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto leading-relaxed font-light">
-              Découvrez nos créations artisanales, préparées avec passion et des ingrédients de qualité premium
-            </p>
+            <div className="inline-flex items-center gap-2 md:gap-3 px-4 md:px-6 py-2 md:py-3 rounded-full text-xs md:text-sm font-medium mb-6 relative overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 font-bold">
+              <span className="relative z-10 tracking-wide text-black">Découvrez nos créations artisanales, préparées avec passion et des ingrédients de qualité premium</span>
+            </div>
           </div>
         </div>
       </div>
@@ -297,6 +296,7 @@ const NotreCarte: React.FC = () => {
                 items={filteredItems}
                 onCustomizeItem={handleCustomizeItem}
                 onOrderItem={handleOrderItem}
+                selectedSize={selectedSize}
               />
             </div>
           )}

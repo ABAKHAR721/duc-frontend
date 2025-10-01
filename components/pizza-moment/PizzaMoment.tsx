@@ -200,14 +200,6 @@ const PizzaMoment: React.FC = () => {
                           {currentPizza.description || "Une création unique qui éveillera vos papilles avec des saveurs authentiques et des ingrédients de qualité premium."}
                         </p>
                       </div>
-
-                      {/* Stats */}
-                      <div className="flex items-center gap-4 md:gap-6">
-                        <div className="flex items-center gap-2 text-white/90 drop-shadow-md">
-                          <Clock className="w-4 h-4 md:w-5 md:h-5" />
-                          <span className="text-sm md:text-base font-medium">15-20 min</span>
-                        </div>
-                      </div>
                     </div>
 
                     {/* Right Side - Order Section */}

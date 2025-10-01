@@ -88,7 +88,7 @@ export default function ItemsPageClient() {
     description: "",
     categoryId: "",
     status: "Active",
-    variants: [{ variantName: "Standard", price: 0, sku: "" }],
+    variants: [{ variantName: "29cm", price: 0, sku: "" }],
     images: [{ imageUrl: "", isDefault: true }],
     options: [],
   });
@@ -129,7 +129,7 @@ export default function ItemsPageClient() {
       description: "",
       categoryId: "",
       status: "Active",
-      variants: [{ variantName: "Standard", price: 0, sku: "" }],
+      variants: [{ variantName: "29cm", price: 0, sku: "" }],
       images: [{ imageUrl: "", isDefault: true }],
       options: [],
     });
@@ -507,7 +507,7 @@ export default function ItemsPageClient() {
             <div className="space-y-3">
               {formData.variants.map((variant, index) => (
                 <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end">
-                  <div className="space-y-1"><Label>Nom</Label><Input value={variant.variantName} onChange={(e) => updateVariant(index, "variantName", e.target.value)} placeholder="Ex: Petite" /></div>
+                  <div className="space-y-1"><Label>Nom</Label><Input value={variant.variantName} onChange={(e) => updateVariant(index, "variantName", e.target.value)} placeholder="Ex: 33cm" /></div>
                   <div className="space-y-1"><Label>Prix (€)</Label><Input type="number" step="0.01" min="0" value={variant.price} onChange={(e) => updateVariant(index, "price", parseFloat(e.target.value) || 0)} placeholder="12.50" /></div>
                   <div className="space-y-1"><Label>SKU</Label><Input value={variant.sku || ""} onChange={(e) => updateVariant(index, "sku", e.target.value)} placeholder="P-MAR-S" /></div>
                   {formData.variants.length > 1 && <Button type="button" onClick={() => removeVariant(index)} size="icon" variant="destructive"><Trash2 className="h-4 w-4" /></Button>}

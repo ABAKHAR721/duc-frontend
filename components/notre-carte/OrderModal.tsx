@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 import { ItemData, ItemVariant } from '@/services/itemsService';
+import { SiUbereats } from 'react-icons/si';
+import { FiPhone } from 'react-icons/fi';
 
 interface OrderModalProps {
   isOpen: boolean;
@@ -14,7 +16,7 @@ const OrderModal: React.FC<OrderModalProps> = ({
   onClose,
   orderDetails,
 }) => {
-  const [orderMethod, setOrderMethod] = useState<'phone' | 'ubereats'>('phone');
+  const [orderMethod, setOrderMethod] = useState<'phone' | 'ubereats' | null>(null);
 
   if (!isOpen || !orderDetails) return null;
 
@@ -26,20 +28,20 @@ const OrderModal: React.FC<OrderModalProps> = ({
 
   const handleUberEatsOrder = () => {
     // Open Uber Eats link
-    window.open('https://www.ubereats.com/restaurant-link', '_blank'); // Replace with actual Uber Eats link
+    window.open('https://www.ubereats.com/fr/store/pizza-le-duc/ShfPBgd5WYG-0lAKLxIazQ', '_blank'); // Replace with actual Uber Eats link
     onClose();
   };
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end md:items-center justify-center p-0 md:p-4">
-      <div className="bg-white/95 backdrop-blur-md rounded-t-3xl md:rounded-3xl shadow-2xl w-full md:max-w-md md:w-full border border-white/20 overflow-hidden max-h-[85vh] md:max-h-[90vh]">
+      <div className="bg-white/95 backdrop-blur-md rounded-t-3xl md:rounded-3xl shadow-2xl w-full md:max-w-md md:w-full border border-white/20 overflow-hidden max-h-[85vh] md:max-h-[80vh] flex flex-col">
         {/* Mobile Drag Handle */}
-        <div className="md:hidden flex justify-center py-2 bg-white/95">
+        <div className="md:hidden flex justify-center py-2 bg-white/95 flex-shrink-0">
           <div className="w-12 h-1 bg-gray-300 rounded-full"></div>
         </div>
 
         {/* Header */}
-        <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white p-4 md:p-6 relative">
+        <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white p-4 md:p-6 relative flex-shrink-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 md:w-10 md:h-10 bg-white/20 rounded-full flex items-center justify-center">
@@ -58,7 +60,7 @@ const OrderModal: React.FC<OrderModalProps> = ({
           </div>
         </div>
 
-        <div className="overflow-y-auto max-h-[calc(85vh-120px)] md:max-h-none">
+        <div className="flex-1 overflow-y-auto">
           <div className="p-4 md:p-6">
           {/* Order Summary */}
           <div className="mb-8 p-6 rounded-2xl border border-gray-100" style={{ backgroundColor: 'var(--muted)' }}>
@@ -120,7 +122,7 @@ const OrderModal: React.FC<OrderModalProps> = ({
               >
                 <div className="flex items-center">
                   <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-green-200 rounded-xl flex items-center justify-center mr-4">
-                    <span className="text-xl">📞</span>
+                    <FiPhone className="w-6 h-6 text-green-600" />
                   </div>
                   <div>
                     <div className="font-semibold" style={{ color: 'var(--foreground)' }}>Commande téléphonique</div>
@@ -141,7 +143,7 @@ const OrderModal: React.FC<OrderModalProps> = ({
               >
                 <div className="flex items-center">
                   <div className="w-12 h-12 bg-gradient-to-br from-black to-gray-800 rounded-xl flex items-center justify-center mr-4">
-                    <span className="text-xl">🚗</span>
+                    <SiUbereats className="w-6 h-6 text-white" />
                   </div>
                   <div>
                     <div className="font-semibold" style={{ color: 'var(--foreground)' }}>Uber Eats</div>
@@ -152,40 +154,45 @@ const OrderModal: React.FC<OrderModalProps> = ({
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="space-y-3">
-            {orderMethod === 'phone' ? (
-              <button
-                onClick={handlePhoneOrder}
-                className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-4 rounded-2xl font-semibold hover:from-green-600 hover:to-green-700 transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center gap-2"
-              >
-                <span className="text-lg">📞</span>
-                Appeler maintenant
-              </button>
-            ) : (
-              <button
-                onClick={handleUberEatsOrder}
-                className="w-full bg-gradient-to-r from-gray-800 to-black text-white py-4 rounded-2xl font-semibold hover:from-gray-900 hover:to-gray-800 transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center gap-2"
-              >
-                <span className="text-lg">🚗</span>
-                Ouvrir Uber Eats
-              </button>
-            )}
-
-            <button
-              onClick={onClose}
-              className="w-full py-3 rounded-2xl font-medium transition-all duration-300 border-2"
-              style={{ 
-                backgroundColor: 'var(--muted)', 
-                color: 'var(--muted-foreground)',
-                borderColor: 'var(--border)'
-              }}
-            >
-              Annuler
-            </button>
-          </div>
           </div>
         </div>
+
+        {/* Action Buttons - Fixed at bottom - Only show when method is selected */}
+        {orderMethod && (
+          <div className="flex-shrink-0 p-4 md:p-6 bg-white/95 border-t border-gray-100">
+            <div className="space-y-3">
+              {orderMethod === 'phone' ? (
+                <button
+                  onClick={handlePhoneOrder}
+                  className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-4 rounded-2xl font-semibold hover:from-green-600 hover:to-green-700 transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center gap-3"
+                >
+                  <FiPhone className="w-5 h-5" />
+                  Appeler maintenant
+                </button>
+              ) : (
+                <button
+                  onClick={handleUberEatsOrder}
+                  className="w-full bg-gradient-to-r from-gray-800 to-black text-white py-4 rounded-2xl font-semibold hover:from-gray-900 hover:to-gray-800 transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center gap-3"
+                >
+                  <SiUbereats className="w-5 h-5" />
+                  Ouvrir Uber Eats
+                </button>
+              )}
+
+              <button
+                onClick={onClose}
+                className="w-full py-3 rounded-2xl font-medium transition-all duration-300 border-2"
+                style={{ 
+                  backgroundColor: 'var(--muted)', 
+                  color: 'var(--muted-foreground)',
+                  borderColor: 'var(--border)'
+                }}
+              >
+                Annuler
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

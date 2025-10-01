@@ -10,6 +10,7 @@ interface SubCategorySectionProps {
   items: ItemData[];
   onCustomizeItem: (item: ItemData) => void;
   onOrderItem: (item: ItemData, variant?: ItemVariant) => void;
+  selectedSize?: string;
 }
 
 const SubCategorySection: React.FC<SubCategorySectionProps> = ({
@@ -17,6 +18,7 @@ const SubCategorySection: React.FC<SubCategorySectionProps> = ({
   items,
   onCustomizeItem,
   onOrderItem,
+  selectedSize,
 }) => {
   // Group items by subcategory
   const itemsBySubCategory = React.useMemo(() => {
@@ -86,6 +88,7 @@ const SubCategorySection: React.FC<SubCategorySectionProps> = ({
                   item={item}
                   onCustomize={() => onCustomizeItem(item)}
                   onOrder={(variant?: ItemVariant) => onOrderItem(item, variant)}
+                  selectedSize={selectedSize}
                 />
               ))}
             </div>
