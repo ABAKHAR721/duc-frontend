@@ -72,10 +72,17 @@ const PizzaMoment: React.FC = () => {
 
 
   const isVegetarian = (pizza: ItemData) => {
-    return pizza?.options?.some(option => 
-      option.optionType === 'VEGETARIENNE' && 
-      JSON.parse(option.optionValue) === 'Oui'
-    ) || false;
+    return pizza?.options?.some(option => {
+      if (option.optionType === 'VEGETARIENNE') {
+        try {
+          return JSON.parse(option.optionValue) === 'Oui';
+        } catch {
+          // If it's not valid JSON, treat it as a string
+          return option.optionValue === 'Oui';
+        }
+      }
+      return false;
+    }) || false;
   };
 
   if (loading) {
