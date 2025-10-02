@@ -6,12 +6,13 @@ import { ItemData, ItemVariant } from '@/services/itemsService';
 interface ItemCardProps {
   item: ItemData;
   onCustomize: () => void;
-  onOrder: (variant?: ItemVariant) => void;
+  onOrder: (variant?: ItemVariant, quantity?: number) => void;
   selectedSize?: string;
 }
 
 const ItemCard: React.FC<ItemCardProps> = ({ item, onCustomize, onOrder, selectedSize }) => {
   const [showAllergens, setShowAllergens] = useState(false);
+  const [quantity, setQuantity] = useState(1);
   // Get the default variant or first variant for pricing
   const defaultVariant = item.variants?.find(v => v.variantName.includes('33 cm')) || item.variants?.[0];
   
@@ -134,8 +135,8 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onCustomize, onOrder, selecte
           )}
         </div>
 
-        {/* Allergens button */}
-        {hasAllergens && (
+        {/* Allergens button - only show if item has allergens */}
+        {hasAllergens && allergensList.length > 0 && (
           <button 
             onClick={() => setShowAllergens(true)}
             className="inline-flex items-center gap-2 text-red-700 text-sm font-semibold hover:text-red-800 transition-all duration-300 mb-3 bg-red-100 hover:bg-red-200 px-4 py-2 rounded-xl border-2 border-red-200 hover:border-red-300 shadow-sm hover:shadow-md transform hover:scale-105"
@@ -145,8 +146,9 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onCustomize, onOrder, selecte
           </button>
         )}
 
-        {/* Customization button */}
-        {item.variants && item.variants.length > 1 && (
+        {/* Action buttons based on item type */}
+        {item.variants && item.variants.length > 1 ? (
+          // Items with multiple variants (pizzas) - show customization button
           <div className="mb-4">
             <button
               onClick={onCustomize}
@@ -156,14 +158,65 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onCustomize, onOrder, selecte
               <span>Personnaliser ma pizza</span>
             </button>
           </div>
+        ) : (
+          // Items with single variant (boissons, etc.) - show quantity selector and order button
+          <div className="space-y-4">
+            {/* Quantity Selector */}
+            <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm font-medium flex items-center gap-2">
+                  <span>🔢</span>
+                  Quantité
+                </span>
+              </div>
+              <div className="flex items-center justify-center gap-4">
+                <button
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  className="w-10 h-10 bg-white border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors font-bold text-gray-600"
+                >
+                  -
+                </button>
+                <span className="text-xl font-bold min-w-[3rem] text-center">{quantity}</span>
+                <button
+                  onClick={() => setQuantity(quantity + 1)}
+                  className="w-10 h-10 bg-white border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors font-bold text-gray-600"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            {/* Order Summary */}
+            <div className="bg-gradient-to-r from-orange-50 to-red-50 rounded-xl p-4 border border-orange-200">
+              <h4 className="font-bold text-sm mb-2">Total de votre commande</h4>
+              <div className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-2">
+                {defaultVariant ? (defaultVariant.price * quantity).toFixed(2) : '0.00'} €
+              </div>
+              <div className="text-xs text-gray-600 space-y-1">
+                <div>Prix unitaire: {defaultVariant ? defaultVariant.price.toFixed(2) : '0.00'} €</div>
+                <div>Quantité: {quantity}</div>
+              </div>
+            </div>
+
+            {/* Order Button */}
+            <button
+              onClick={() => onOrder(defaultVariant, quantity)}
+              className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold py-4 px-6 rounded-xl hover:from-orange-600 hover:to-red-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center gap-2"
+            >
+              <span className="text-lg">🛒</span>
+              <span>COMMANDER</span>
+            </button>
+          </div>
         )}
 
-        {/* Price and Add button */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="text-xl md:text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
-            {getDisplayPrice()}
+        {/* Price display for items with multiple variants */}
+        {item.variants && item.variants.length > 1 && (
+          <div className="flex items-center justify-between mb-4">
+            <div className="text-xl md:text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+              {getDisplayPrice()}
+            </div>
           </div>
-        </div>
+        )}
       </div>
       
 

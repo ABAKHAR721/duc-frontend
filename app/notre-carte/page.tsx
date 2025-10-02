@@ -162,12 +162,12 @@ const NotreCarte: React.FC = () => {
     setIsCustomizationModalOpen(true);
   };
 
-  const handleOrderItem = (item: ItemData, variant?: ItemVariant) => {
+  const handleOrderItem = (item: ItemData, variant?: ItemVariant, quantity: number = 1) => {
     const orderData = {
       item,
       variant,
-      quantity: 1,
-      totalPrice: variant?.price || 0,
+      quantity,
+      totalPrice: (variant?.price || 0) * quantity,
     };
     setOrderDetails(orderData);
     setIsOrderModalOpen(true);
