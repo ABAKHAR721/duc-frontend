@@ -91,7 +91,7 @@ const SubCategorySection: React.FC<SubCategorySectionProps> = ({
             </div>
 
             {/* Items Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 md:px-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 md:px-8 items-stretch">
               {categoryItems.map((item) => (
                 <ItemCard
                   key={item.id}

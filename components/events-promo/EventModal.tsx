@@ -166,48 +166,6 @@ const EventModal: React.FC<EventModalProps> = ({ event, isOpen, onClose }) => {
                   )}
                 </div>
 
-                {/* MODIFICATION START: Moved the "Order Section" here */}
-                <div className="pt-6">
-                  <div className="rounded-2xl p-6" style={{ backgroundColor: 'var(--muted)' }}>
-                    <h3 className="text-lg font-medium mb-4" style={{ color: 'var(--foreground)' }}>
-                      Profiter de cette offre
-                    </h3>
-
-                    <div className="relative" ref={menuRef}>
-                      <div className="space-y-2 transition-all duration-300 ease-in-out">
-                        {!isSubMenuOpen ? (
-                          <button
-                            onClick={() => setIsSubMenuOpen(true)}
-                            className="w-full py-3 px-4 rounded-xl font-medium transition-all hover:opacity-90 flex items-center justify-center gap-2 text-white"
-                            style={{ background: 'var(--primary)' }}
-                          >
-                            <span>Commander maintenant</span>
-                          </button>
-                        ) : (
-                          <div className="space-y-2">
-                            <a
-                              href="tel:+33XXXXXXXXX"
-                              className="w-full bg-orange-500 hover:bg-orange-600 py-3 px-4 rounded-xl font-medium transition-all hover:opacity-90 flex items-center justify-center gap-2 text-white"
-                            >
-                              <FiPhone className="w-4 h-4" />
-                              <span>Appeler</span>
-                            </a>
-                            <a
-                              href="https://www.ubereats.com/fr/store/pizza-le-duc/ShfPBgd5WYG-0lAKLxIazQ"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="w-full bg-green-500 hover:bg-green-600 py-3 px-4 rounded-xl font-medium transition-all hover:opacity-90 flex items-center justify-center gap-2 text-white"
-                            >
-                              <SiUbereats className="w-8 h-8" />
-                              <span>Uber Eats</span>
-                            </a>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                {/* MODIFICATION END */}
               </div>
 
               {/* --- RIGHT COLUMN --- */}
@@ -259,7 +217,49 @@ const EventModal: React.FC<EventModalProps> = ({ event, isOpen, onClose }) => {
                       </button>
                     )}
                   </div>
-                </div>                
+                </div>      
+                 {/* MODIFICATION START: Moved the "Order Section" here */}
+                 <div className="pt-6">
+                  <div className="rounded-2xl p-6" style={{ backgroundColor: 'var(--muted)' }}>
+                    <h3 className="text-lg font-medium mb-4" style={{ color: 'var(--foreground)' }}>
+                      Profiter de cette offre
+                    </h3>
+
+                    <div className="relative" ref={menuRef}>
+                      <div className="space-y-2 transition-all duration-300 ease-in-out">
+                        {!isSubMenuOpen ? (
+                          <button
+                            onClick={() => setIsSubMenuOpen(true)}
+                            className="w-full py-3 px-4 rounded-xl font-medium transition-all hover:opacity-90 flex items-center justify-center gap-2 text-white"
+                            style={{ background: 'var(--primary)' }}
+                          >
+                            <span>Commander maintenant</span>
+                          </button>
+                        ) : (
+                          <div className="space-y-2">
+                            <a
+                              href="tel:+33XXXXXXXXX"
+                              className="w-full bg-orange-500 hover:bg-orange-600 py-3 px-4 rounded-xl font-medium transition-all hover:opacity-90 flex items-center justify-center gap-2 text-white"
+                            >
+                              <FiPhone className="w-4 h-4" />
+                              <span>Appeler</span>
+                            </a>
+                            <a
+                              href="https://www.ubereats.com/fr/store/pizza-le-duc/ShfPBgd5WYG-0lAKLxIazQ"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="w-full bg-green-500 hover:bg-green-600 py-3 px-4 rounded-xl font-medium transition-all hover:opacity-90 flex items-center justify-center gap-2 text-white"
+                            >
+                              <SiUbereats className="w-8 h-8" />
+                              <span>Uber Eats</span>
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {/* MODIFICATION END */}          
                 {/* Order Section has been moved */}
               </div>
             </div>

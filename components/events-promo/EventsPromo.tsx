@@ -404,7 +404,7 @@ const EventsPromo: React.FC = () => {
                                       className="w-full bg-green-500 hover:bg-green-600 text-left flex items-center justify-center px-4 py-3 text-sm text-white hover:bg-gray-800"
                                     >
                                       <div className="flex items-center">
-                                        <SiUbereats className="w-8 h-8 mr-3" />
+                                        <SiUbereats className="w-5 h-5 mr-3" />
                                         <span>Livraison avec Uber Eats</span>
                                       </div>
                                     </a>

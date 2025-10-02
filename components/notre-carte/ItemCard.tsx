@@ -90,7 +90,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onCustomize, onOrder, selecte
   };
 
   return (
-    <div className="group bg-white/95 backdrop-blur-md rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-white/20 relative">
+    <div className="group bg-white/95 backdrop-blur-md rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-white/20 relative flex flex-col h-full">
       {/* Vegetarian badge - positioned absolutely */}
       {isVegetarian && (
         <div className="absolute top-4 right-4 z-10">
@@ -106,7 +106,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onCustomize, onOrder, selecte
 
       {/* Item Image */}
       {defaultImage && (
-        <div className="relative h-48 bg-gradient-to-br from-orange-100 to-red-100 overflow-hidden">
+        <div className="relative h-48 bg-gradient-to-br from-orange-100 to-red-100 overflow-hidden flex-shrink-0">
           <img 
             src={defaultImage} 
             alt={item.name}
@@ -117,106 +117,116 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onCustomize, onOrder, selecte
       )}
 
       {/* Item Content */}
-      <div className="p-6">
-        {/* Item Name */}
-        <div className="mb-3">
-          <h3 className="text-lg md:text-xl font-bold leading-tight" style={{ color: 'var(--foreground)' }}>
+      <div className="p-6 flex flex-col flex-grow">
+        {/* Item Name - Fixed height */}
+        <div className="mb-3 h-14 flex items-start">
+          <h3 className="text-lg md:text-xl font-bold leading-tight line-clamp-2" style={{ color: 'var(--foreground)' }}>
             {item.name}
           </h3>
         </div>
 
-        {/* Description */}
-        <div className="text-sm mb-4" style={{ color: 'var(--muted-foreground)' }}>
+        {/* Description - Fixed height */}
+        <div className="text-sm mb-4 h-20 overflow-hidden" style={{ color: 'var(--muted-foreground)' }}>
           {item.description && (
-            <p className="mb-2 leading-relaxed">{item.description}</p>
+            <p className="mb-2 leading-relaxed line-clamp-2">{item.description}</p>
           )}
           {baseDescription && (
-            <p className="text-orange-600 font-medium">base : {baseDescription}</p>
+            <p className="text-orange-600 font-medium line-clamp-1">base : {baseDescription}</p>
           )}
         </div>
 
-        {/* Allergens button - only show if item has allergens */}
-        {hasAllergens && allergensList.length > 0 && (
-          <button 
-            onClick={() => setShowAllergens(true)}
-            className="inline-flex items-center gap-2 text-red-700 text-sm font-semibold hover:text-red-800 transition-all duration-300 mb-3 bg-red-100 hover:bg-red-200 px-4 py-2 rounded-xl border-2 border-red-200 hover:border-red-300 shadow-sm hover:shadow-md transform hover:scale-105"
-          >
-            <span className="text-base">⚠️</span>
-            <span>Voir les allergènes</span>
-          </button>
-        )}
+        {/* Buttons area - Fixed height for consistent layout */}
+        <div className="mb-3 space-y-3">
+          {/* Allergens button - same width as customize button */}
+          {hasAllergens && allergensList.length > 0 && (
+            <div className="flex justify-center">
+              <button 
+                onClick={() => setShowAllergens(true)}
+                className="w-full max-w-xs inline-flex items-center justify-center gap-2 text-red-700 text-sm font-semibold hover:text-red-800 transition-all duration-300 bg-red-100 hover:bg-red-200 px-4 py-2 rounded-xl border-2 border-red-200 hover:border-red-300 shadow-sm hover:shadow-md transform hover:scale-105"
+              >
+                <span className="text-base">⚠️</span>
+                <span>Voir les allergènes</span>
+              </button>
+            </div>
+          )}
+          
+          {/* Customize button for pizzas - takes allergen button place if no allergens */}
+          {item.variants && item.variants.length > 1 && (
+            <div className="flex justify-center">
+              <button
+                onClick={onCustomize}
+                className="w-full max-w-xs inline-flex items-center justify-center gap-2 text-orange-700 text-sm font-semibold hover:text-orange-800 transition-all duration-300 bg-orange-100 hover:bg-orange-200 px-4 py-2 rounded-xl border-2 border-orange-200 hover:border-orange-300 shadow-sm hover:shadow-md transform hover:scale-105"
+              >
+                <span className="text-base">🎨</span>
+                <span>Personnaliser ma pizza</span>
+              </button>
+            </div>
+          )}
+        </div>
 
-        {/* Action buttons based on item type */}
-        {item.variants && item.variants.length > 1 ? (
-          // Items with multiple variants (pizzas) - show customization button
-          <div className="mb-4">
-            <button
-              onClick={onCustomize}
-              className="inline-flex items-center gap-2 text-orange-700 text-sm font-semibold hover:text-orange-800 transition-all duration-300 bg-orange-100 hover:bg-orange-200 px-4 py-2 rounded-xl border-2 border-orange-200 hover:border-orange-300 shadow-sm hover:shadow-md transform hover:scale-105"
-            >
-              <span className="text-base">🎨</span>
-              <span>Personnaliser ma pizza</span>
-            </button>
-          </div>
-        ) : (
-          // Items with single variant (boissons, etc.) - show quantity selector and order button
-          <div className="space-y-4">
-            {/* Quantity Selector */}
-            <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-sm font-medium flex items-center gap-2">
-                  <span>🔢</span>
-                  Quantité
-                </span>
-              </div>
-              <div className="flex items-center justify-center gap-4">
-                <button
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="w-10 h-10 bg-white border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors font-bold text-gray-600"
-                >
-                  -
-                </button>
-                <span className="text-xl font-bold min-w-[3rem] text-center">{quantity}</span>
-                <button
-                  onClick={() => setQuantity(quantity + 1)}
-                  className="w-10 h-10 bg-white border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors font-bold text-gray-600"
-                >
-                  +
-                </button>
+        {/* Flexible spacer to push price/order section to bottom */}
+        <div className="flex-grow"></div>
+
+        {/* Bottom section based on item type */}
+        <div className="mt-auto">
+          {item.variants && item.variants.length > 1 ? (
+            // Items with multiple variants (pizzas) - show price only
+            <div className="text-center">
+              <div className="text-xl md:text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+                {getDisplayPrice()}
               </div>
             </div>
-
-            {/* Order Summary */}
-            <div className="bg-gradient-to-r from-orange-50 to-red-50 rounded-xl p-4 border border-orange-200">
-              <h4 className="font-bold text-sm mb-2">Total de votre commande</h4>
-              <div className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-2">
-                {defaultVariant ? (defaultVariant.price * quantity).toFixed(2) : '0.00'} €
+          ) : (
+            // Items with single variant (boissons, etc.) - show quantity selector and order button
+            <div className="space-y-4">
+              {/* Quantity Selector */}
+              <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-sm font-medium flex items-center gap-2">
+                    <span>🔢</span>
+                    Quantité
+                  </span>
+                </div>
+                <div className="flex items-center justify-center gap-4">
+                  <button
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    className="w-10 h-10 bg-white border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors font-bold text-gray-600"
+                  >
+                    -
+                  </button>
+                  <span className="text-xl font-bold min-w-[3rem] text-center">{quantity}</span>
+                  <button
+                    onClick={() => setQuantity(quantity + 1)}
+                    className="w-10 h-10 bg-white border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors font-bold text-gray-600"
+                  >
+                    +
+                  </button>
+                </div>
               </div>
-              <div className="text-xs text-gray-600 space-y-1">
-                <div>Prix unitaire: {defaultVariant ? defaultVariant.price.toFixed(2) : '0.00'} €</div>
-                <div>Quantité: {quantity}</div>
+
+              {/* Order Summary */}
+              <div className="bg-gradient-to-r from-orange-50 to-red-50 rounded-xl p-4 border border-orange-200">
+                <h4 className="font-bold text-sm mb-2">Total de votre commande</h4>
+                <div className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-2">
+                  {defaultVariant ? (defaultVariant.price * quantity).toFixed(2) : '0.00'} €
+                </div>
+                <div className="text-xs text-gray-600 space-y-1">
+                  <div>Prix unitaire: {defaultVariant ? defaultVariant.price.toFixed(2) : '0.00'} €</div>
+                  <div>Quantité: {quantity}</div>
+                </div>
               </div>
-            </div>
 
-            {/* Order Button */}
-            <button
-              onClick={() => onOrder(defaultVariant, quantity)}
-              className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold py-4 px-6 rounded-xl hover:from-orange-600 hover:to-red-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center gap-2"
-            >
-              <span className="text-lg">🛒</span>
-              <span>COMMANDER</span>
-            </button>
-          </div>
-        )}
-
-        {/* Price display for items with multiple variants */}
-        {item.variants && item.variants.length > 1 && (
-          <div className="flex items-center justify-between mb-4">
-            <div className="text-xl md:text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
-              {getDisplayPrice()}
+              {/* Order Button */}
+              <button
+                onClick={() => onOrder(defaultVariant, quantity)}
+                className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold py-4 px-6 rounded-xl hover:from-orange-600 hover:to-red-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center gap-2"
+              >
+                <span className="text-lg">🛒</span>
+                <span>COMMANDER</span>
+              </button>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
       
 
