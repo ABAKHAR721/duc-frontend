@@ -30,7 +30,6 @@ const EventModal: React.FC<EventModalProps> = ({ event, isOpen, onClose }) => {
     };
   }, []);
 
-  // Countdown timer effect
   useEffect(() => {
     if (!event.endDate) return;
 
@@ -71,7 +70,6 @@ const EventModal: React.FC<EventModalProps> = ({ event, isOpen, onClose }) => {
     return new Date(event.endDate) > new Date();
   };
 
-  // Early return if event is not available
   if (!event || !isOpen) {
     return null;
   }
@@ -116,7 +114,6 @@ const EventModal: React.FC<EventModalProps> = ({ event, isOpen, onClose }) => {
             </div>
           </div>
 
-          {/* Countdown Timer */}
           {timeLeft && (
             <div className="mt-6 rounded-2xl p-6" style={{ backgroundColor: 'var(--muted)' }}>
               <div className="flex items-center gap-2 mb-4">
@@ -148,8 +145,9 @@ const EventModal: React.FC<EventModalProps> = ({ event, isOpen, onClose }) => {
         <div className="flex-1 overflow-y-auto min-h-0">
           <div className="p-8">
             <div className="grid lg:grid-cols-2 gap-8">
-              {/* Image Gallery */}
+              {/* --- LEFT COLUMN --- */}
               <div className="space-y-4">
+                {/* Image Gallery */}
                 <div className="relative aspect-square rounded-2xl overflow-hidden">
                   <img
                     src={event.imageUrl || '/placeholder-event.jpg'}
@@ -158,7 +156,6 @@ const EventModal: React.FC<EventModalProps> = ({ event, isOpen, onClose }) => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
                   
-                  {/* Event Status Badge */}
                   {isEventActive() && (
                     <div className="absolute top-4 right-4 backdrop-blur-sm rounded-full p-2" style={{ backgroundColor: 'var(--background)' }}>
                       <div className="flex items-center gap-2" style={{ color: 'var(--color-green-600)' }}>
@@ -168,9 +165,52 @@ const EventModal: React.FC<EventModalProps> = ({ event, isOpen, onClose }) => {
                     </div>
                   )}
                 </div>
+
+                {/* MODIFICATION START: Moved the "Order Section" here */}
+                <div className="pt-6">
+                  <div className="rounded-2xl p-6" style={{ backgroundColor: 'var(--muted)' }}>
+                    <h3 className="text-lg font-medium mb-4" style={{ color: 'var(--foreground)' }}>
+                      Profiter de cette offre
+                    </h3>
+
+                    <div className="relative" ref={menuRef}>
+                      <div className="space-y-2 transition-all duration-300 ease-in-out">
+                        {!isSubMenuOpen ? (
+                          <button
+                            onClick={() => setIsSubMenuOpen(true)}
+                            className="w-full py-3 px-4 rounded-xl font-medium transition-all hover:opacity-90 flex items-center justify-center gap-2 text-white"
+                            style={{ background: 'var(--primary)' }}
+                          >
+                            <span>Commander maintenant</span>
+                          </button>
+                        ) : (
+                          <div className="space-y-2">
+                            <a
+                              href="tel:+33XXXXXXXXX"
+                              className="w-full bg-orange-500 hover:bg-orange-600 py-3 px-4 rounded-xl font-medium transition-all hover:opacity-90 flex items-center justify-center gap-2 text-white"
+                            >
+                              <FiPhone className="w-4 h-4" />
+                              <span>Appeler</span>
+                            </a>
+                            <a
+                              href="https://www.ubereats.com/fr/store/pizza-le-duc/ShfPBgd5WYG-0lAKLxIazQ"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="w-full bg-green-500 hover:bg-green-600 py-3 px-4 rounded-xl font-medium transition-all hover:opacity-90 flex items-center justify-center gap-2 text-white"
+                            >
+                              <SiUbereats className="w-8 h-8" />
+                              <span>Uber Eats</span>
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {/* MODIFICATION END */}
               </div>
 
-              {/* Content Section */}
+              {/* --- RIGHT COLUMN --- */}
               <div className="space-y-6">
                 {/* Description */}
                 <div>
@@ -219,96 +259,8 @@ const EventModal: React.FC<EventModalProps> = ({ event, isOpen, onClose }) => {
                       </button>
                     )}
                   </div>
-                </div>
-
-                {/* Event Type & Status */}
-                {(event.eventType || event.status) && (
-                  <div>
-                    <h3 className="text-lg font-medium mb-3" style={{ color: 'var(--foreground)' }}>Informations détaillées</h3>
-                    <div className="space-y-4">
-                      {event.eventType && (
-                        <div className="rounded-xl p-4" style={{ backgroundColor: 'var(--muted)' }}>
-                          <h4 className="font-medium mb-2 capitalize flex items-center gap-2" style={{ color: 'var(--foreground)' }}>
-                            <Gift className="w-4 h-4" style={{ color: 'var(--primary)' }} />
-                            Type d'événement
-                          </h4>
-                          <span
-                            className="px-3 py-1 rounded-full text-xs border"
-                            style={{
-                              backgroundColor: 'var(--background)',
-                              color: 'var(--muted-foreground)',
-                              borderColor: 'var(--border)'
-                            }}
-                          >
-                            {event.eventType}
-                          </span>
-                        </div>
-                      )}
-                      
-                      <div className="rounded-xl p-4" style={{ backgroundColor: 'var(--muted)' }}>
-                        <h4 className="font-medium mb-2 capitalize flex items-center gap-2" style={{ color: 'var(--foreground)' }}>
-                          <MapPin className="w-4 h-4" style={{ color: 'var(--primary)' }} />
-                          Disponibilité
-                        </h4>
-                        <div className="flex flex-wrap gap-2">
-                          <span className="px-3 py-1 rounded-full text-xs border" style={{ backgroundColor: 'var(--background)', color: 'var(--muted-foreground)', borderColor: 'var(--border)' }}>
-                            🏪 En restaurant
-                          </span>
-                          <span className="px-3 py-1 rounded-full text-xs border" style={{ backgroundColor: 'var(--background)', color: 'var(--muted-foreground)', borderColor: 'var(--border)' }}>
-                            📞 Par téléphone
-                          </span>
-                          <span className="px-3 py-1 rounded-full text-xs border" style={{ backgroundColor: 'var(--background)', color: 'var(--muted-foreground)', borderColor: 'var(--border)' }}>
-                            🚴 En livraison
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Order Section */}
-                <div className="border-t pt-6" style={{ borderColor: 'var(--border)' }}>
-                  <div className="rounded-2xl p-6" style={{ backgroundColor: 'var(--muted)' }}>
-                    <h3 className="text-lg font-medium mb-4" style={{ color: 'var(--foreground)' }}>
-                      Profiter de cette offre
-                    </h3>
-
-                    <div className="relative" ref={menuRef}>
-                      <div className="space-y-2 transition-all duration-300 ease-in-out">
-                        {!isSubMenuOpen ? (
-                          <button
-                            onClick={() => setIsSubMenuOpen(true)}
-                            className="w-full py-3 px-4 rounded-xl font-medium transition-all hover:opacity-90 flex items-center justify-center gap-2 text-white"
-                            style={{ background: 'var(--primary)' }}
-                          >
-                            <span>Commander maintenant</span>
-                          </button>
-                        ) : (
-                          <div className="space-y-2">
-                            <a
-                              href="tel:+33XXXXXXXXX"
-                              className="w-full py-3 px-4 rounded-xl font-medium transition-all hover:opacity-90 flex items-center justify-center gap-2 text-white"
-                              style={{ background: '#22c55e' }}
-                            >
-                              <FiPhone className="w-4 h-4" />
-                              <span>Appeler</span>
-                            </a>
-                            <a
-                              href="https://www.ubereats.com/fr/store/pizza-le-duc/ShfPBgd5WYG-0lAKLxIazQ"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="w-full py-3 px-4 rounded-xl font-medium transition-all hover:opacity-90 flex items-center justify-center gap-2 text-white"
-                              style={{ background: '#000000' }}
-                            >
-                              <SiUbereats className="w-4 h-4" />
-                              <span>Uber Eats</span>
-                            </a>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                </div>                
+                {/* Order Section has been moved */}
               </div>
             </div>
           </div>

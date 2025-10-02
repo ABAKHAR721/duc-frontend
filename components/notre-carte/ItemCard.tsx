@@ -170,8 +170,8 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onCustomize, onOrder, selecte
       {/* Allergens Modal */}
       {showAllergens && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-6 max-w-md w-full mx-4 border border-white/20">
-            <div className="flex justify-between items-center mb-6">
+          <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl max-w-md w-full mx-4 border border-white/20 max-h-[80vh] flex flex-col">
+            <div className="flex justify-between items-center p-6 pb-4 flex-shrink-0">
               <h3 className="text-xl font-bold flex items-center gap-3" style={{ color: 'var(--foreground)' }}>
                 <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
                   <span className="text-red-600 text-lg">⚠️</span>
@@ -188,15 +188,17 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onCustomize, onOrder, selecte
                 </svg>
               </button>
             </div>
-            <div className="space-y-3 mb-6">
-              {allergensList.map((allergen, index) => (
-                <div key={index} className="flex items-center space-x-3 p-4 bg-gradient-to-r from-red-50 to-orange-50 rounded-xl border-l-4 border-red-400 shadow-sm">
-                  <div className="w-3 h-3 bg-red-500 rounded-full flex-shrink-0 animate-pulse"></div>
-                  <span className="text-sm font-medium" style={{ color: 'var(--foreground)' }}>{allergen}</span>
-                </div>
-              ))}
+            <div className="flex-1 overflow-y-auto px-6">
+              <div className="space-y-2 pb-4">
+                {allergensList.map((allergen, index) => (
+                  <div key={index} className="flex items-center space-x-3 p-3 bg-gradient-to-r from-red-50 to-orange-50 rounded-lg border-l-4 border-red-400 shadow-sm">
+                    <div className="w-2 h-2 bg-red-500 rounded-full flex-shrink-0"></div>
+                    <span className="text-sm font-medium" style={{ color: 'var(--foreground)' }}>{allergen}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="pt-4 border-t border-gray-200">
+            <div className="p-6 pt-4 border-t border-gray-200 flex-shrink-0">
               <p className="text-xs text-center leading-relaxed" style={{ color: 'var(--muted-foreground)' }}>
                 ⚠️ Veuillez informer notre équipe de toute allergie alimentaire avant de commander
               </p>

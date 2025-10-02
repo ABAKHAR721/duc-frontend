@@ -260,13 +260,19 @@ const Footer: React.FC = () => {
               >
                 Digitgrow
               </a>
+              {' '}filiale{' '}
+              <a
+                href="https://businessly360.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:text-primary/80 transition-colors"
+              >
+                Businessly 360
+              </a>
             </p>
             <div className="flex items-center gap-4 text-xs text-white/50">
               <a href="/privacy" className="hover:text-white transition-colors">
                 Politique de confidentialité
-              </a>
-              <a href="/terms" className="hover:text-white transition-colors">
-                Conditions d&apos;utilisation
               </a>
             </div>
           </div>

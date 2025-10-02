@@ -239,8 +239,7 @@ const EventsPromo: React.FC = () => {
                   <div className="rounded-lg overflow-hidden border" style={{ backgroundColor: 'var(--background)', borderColor: 'var(--border)' }}>
                     <a 
                       href="tel:+33XXXXXXXXX" 
-                      className="flex items-center px-4 py-3 text-sm border-b hover:opacity-80 transition-opacity text-white rounded-lg mb-2"
-                      style={{ backgroundColor: '#22c55e' }}
+                      className="flex items-center bg-orange-500 hover:bg-orange-600 px-4 py-3 text-sm border-b hover:opacity-80 transition-opacity text-white rounded-lg mb-2"
                     >
                       <FiPhone className="w-4 h-4 mr-3" />
                       Commander par Téléphone
@@ -249,8 +248,7 @@ const EventsPromo: React.FC = () => {
                       href="https://www.ubereats.com/fr/store/pizza-le-duc/ShfPBgd5WYG-0lAKLxIazQ"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full text-left flex items-center justify-center px-4 py-3 text-sm hover:opacity-80 transition-opacity text-white rounded-lg"
-                      style={{ backgroundColor: '#000000' }}
+                      className="w-full bg-green-500 hover:bg-green-600 text-left flex items-center justify-center px-4 py-3 text-sm hover:opacity-80 transition-opacity text-white rounded-lg"
                     >
                       <div className="flex items-center">
                         <SiUbereats className="w-4 h-4 mr-3" />
@@ -384,25 +382,33 @@ const EventsPromo: React.FC = () => {
                               <span>Profiter de l'offre</span>
                             </button>
                             {isSubMenuOpen && (
-                              <div className="absolute bottom-full mb-2 left-0 right-0 bg-white rounded-lg shadow-xl z-20 overflow-hidden border border-gray-200 min-w-[250px]">
+                              <div className="absolute bottom-full mb-2 left-0 right-0  rounded-lg shadow-xl z-20 overflow-hidden border border-gray-200 min-w-[250px]">
                                 <div className="transition-transform duration-300 ease-in-out">
                                   <div className="w-full">
-                                    <a href="tel:+33XXXXXXXXX" className="flex items-center px-4 py-3 text-sm text-white hover:bg-green-600 border-b border-gray-100" style={{ backgroundColor: '#22c55e' }}>
-                                      <FiPhone className="w-4 h-4 mr-3" />
-                                      Commander par Téléphone
+                                    <a 
+                                      href="tel:+33XXXXXXXXX"
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="w-full bg-orange-500 hover:bg-orange-600 text-left flex items-center justify-center px-4 py-3 text-sm text-white hover:bg-gray-800"
+                                    >
+                                      <div className="flex items-center">
+                                        <FiPhone className="w-4 h-4 mr-3" />
+                                        <span>Commander par Téléphone</span>
+                                      </div>
                                     </a>
+
                                     <a 
                                       href="https://www.ubereats.com/fr/store/pizza-le-duc/ShfPBgd5WYG-0lAKLxIazQ"
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="w-full text-left flex items-center justify-center px-4 py-3 text-sm text-white hover:bg-gray-800"
-                                      style={{ backgroundColor: '#000000' }}
+                                      className="w-full bg-green-500 hover:bg-green-600 text-left flex items-center justify-center px-4 py-3 text-sm text-white hover:bg-gray-800"
                                     >
                                       <div className="flex items-center">
-                                        <SiUbereats className="w-4 h-4 mr-3" />
+                                        <SiUbereats className="w-8 h-8 mr-3" />
                                         <span>Livraison avec Uber Eats</span>
                                       </div>
                                     </a>
+
                                   </div>
                                 </div>
                               </div>

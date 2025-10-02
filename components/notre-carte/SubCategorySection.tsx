@@ -24,9 +24,13 @@ const SubCategorySection: React.FC<SubCategorySectionProps> = ({
   const itemsBySubCategory = React.useMemo(() => {
     const grouped: { [key: string]: ItemData[] } = {};
     
-    // Special case for "pizza-moment" - show items from parent category
-    if (category.name.toLowerCase().includes('pizza-moment') || category.name.toLowerCase().includes('pizza du moment')) {
+    // Special case for special categories - show their own items directly
+    if (category.name.toLowerCase().includes('pizza-moment') || 
+        category.name.toLowerCase().includes('pizza du moment') ||
+        category.name.toLowerCase().includes('boissons') ||
+        category.name.toLowerCase().includes('formules du midi')) {
       grouped[category.name] = items.filter(item => item.categoryId === category.id);
+      console.log(`SubCategorySection: Special category "${category.name}" has ${grouped[category.name].length} items`);
     } 
     // If category has children (subcategories), group items by subcategory only
     else if (category.children && category.children.length > 0) {
@@ -37,8 +41,14 @@ const SubCategorySection: React.FC<SubCategorySectionProps> = ({
         }
       });
     } 
-    // For other parent categories without children, don't show any items
-    // (items should only be in subcategories)
+    // For categories without children, show their own items
+    else {
+      const directItems = items.filter(item => item.categoryId === category.id);
+      if (directItems.length > 0) {
+        grouped[category.name] = directItems;
+        console.log(`SubCategorySection: Category "${category.name}" (no children) has ${directItems.length} direct items`);
+      }
+    }
     
     return grouped;
   }, [category, items]);

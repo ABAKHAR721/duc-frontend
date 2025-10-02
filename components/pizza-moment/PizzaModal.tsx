@@ -31,7 +31,6 @@ const PizzaModal: React.FC<PizzaModalProps> = ({ pizza, isOpen, onClose }) => {
     };
   }, []);
 
-  // Early return if pizza is not available
   if (!pizza || !isOpen) {
     return null;
   }
@@ -45,7 +44,6 @@ const PizzaModal: React.FC<PizzaModalProps> = ({ pizza, isOpen, onClose }) => {
         try {
           return JSON.parse(option.optionValue) === 'Oui';
         } catch {
-          // If it's not valid JSON, treat it as a string
           return option.optionValue === 'Oui';
         }
       }
@@ -68,9 +66,15 @@ const PizzaModal: React.FC<PizzaModalProps> = ({ pizza, isOpen, onClose }) => {
         acc[option.optionType] = [];
       }
       const parsedValue = parseOptions(option.optionValue);
-      if (option.optionType === 'ALLERGENES' && Array.isArray(parsedValue)) {
-        // For allergens, spread the array to show individual items
-        acc[option.optionType].push(...parsedValue);
+      
+      // Handle arrays properly - don't spread them unless they're allergens
+      if (Array.isArray(parsedValue)) {
+        if (option.optionType === 'ALLERGENES') {
+          acc[option.optionType].push(...parsedValue);
+        } else {
+          // For other types like BASE, keep the array as a single item or join it
+          acc[option.optionType].push(parsedValue.join(', '));
+        }
       } else {
         acc[option.optionType].push(parsedValue);
       }
@@ -116,52 +120,132 @@ const PizzaModal: React.FC<PizzaModalProps> = ({ pizza, isOpen, onClose }) => {
         <div className="overflow-y-auto max-h-[calc(90vh-120px)]">
           <div className="p-8">
             <div className="grid lg:grid-cols-2 gap-8">
-              {/* Image Gallery */}
+              {/* --- LEFT COLUMN --- */}
               <div className="space-y-4">
-                <div className="relative aspect-square rounded-2xl overflow-hidden">
-                  <img
-                    src={pizza?.images?.[selectedImageIndex]?.imageUrl || '/placeholder-pizza.jpg'}
-                    alt={pizza?.name || 'Pizza'}
-                    className="w-full h-full object-cover"
-                  />
-
-                  {/* Vegetarian Icon */}
-                  {isVegetarian(pizza) && (
-                    <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full p-2">
-                      <img
-                        src="/sans-viande.svg"
-                        alt="Végétarien"
-                        className="w-16 h-16"
-                      />
+                {/* Image Gallery */}
+                <div className="space-y-4">
+                  <div className="relative aspect-square rounded-2xl overflow-hidden">
+                    <img
+                      src={pizza?.images?.[selectedImageIndex]?.imageUrl || '/placeholder-pizza.jpg'}
+                      alt={pizza?.name || 'Pizza'}
+                      className="w-full h-full object-cover"
+                    />
+                    {isVegetarian(pizza) && (
+                      <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full p-2">
+                        <img
+                          src="/sans-viande.svg"
+                          alt="Végétarien"
+                          className="w-16 h-16"
+                        />
+                      </div>
+                    )}
+                  </div>
+                  {pizza?.images && pizza.images.length > 1 && (
+                    <div className="flex gap-2">
+                      {pizza.images.map((image, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setSelectedImageIndex(index)}
+                          className={`flex-1 aspect-square rounded-lg overflow-hidden border-2 transition-all ${
+                            selectedImageIndex === index
+                              ? 'border-primary'
+                              : 'border-gray-200 hover:border-gray-300'
+                          }`}
+                        >
+                          <img
+                            src={image.imageUrl}
+                            alt={`${pizza?.name || 'Pizza'} ${index + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                        </button>
+                      ))}
                     </div>
                   )}
                 </div>
 
-                {/* Image Thumbnails */}
-                {pizza?.images && pizza.images.length > 1 && (
-                  <div className="flex gap-2">
-                    {pizza.images.map((image, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setSelectedImageIndex(index)}
-                        className={`flex-1 aspect-square rounded-lg overflow-hidden border-2 transition-all ${
-                          selectedImageIndex === index
-                            ? 'border-primary'
-                            : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                      >
-                        <img
-                          src={image.imageUrl}
-                          alt={`${pizza?.name || 'Pizza'} ${index + 1}`}
-                          className="w-full h-full object-cover"
-                        />
-                      </button>
-                    ))}
+                {/* MODIFICATION START: Moved the entire "Quantity and Order" block here */}
+                <div className="pt-6">
+                  <div className="bg-gray-50 rounded-2xl p-6" style={{ backgroundColor: 'var(--muted)' }}>
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <div className="text-sm" style={{ color: 'var(--muted-foreground)' }}>
+                          Prix unitaire
+                        </div>
+                        <div className="text-xl font-bold" style={{ color: 'var(--primary)' }}>
+                          {getSelectedPrice().toFixed(2)}€
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                          className="w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors"
+                          style={{ color: 'var(--foreground)' }}
+                        >
+                          <Minus className="w-4 h-4" />
+                        </button>
+                        <span className="text-xl font-semibold w-8 text-center" style={{ color: 'var(--foreground)' }}>
+                          {quantity}
+                        </span>
+                        <button
+                          onClick={() => setQuantity(quantity + 1)}
+                          className="w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors"
+                          style={{ color: 'var(--foreground)' }}
+                        >
+                          <Plus className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="border-t pt-4 mb-4" style={{ borderColor: 'var(--border)' }}>
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="text-lg font-semibold" style={{ color: 'var(--foreground)' }}>
+                          Total
+                        </span>
+                        <span className="text-2xl font-bold" style={{ color: 'var(--primary)' }}>
+                          {getTotalPrice().toFixed(2)}€
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="relative" ref={menuRef}>
+                      <div className="space-y-2 transition-all duration-300 ease-in-out">
+                        {!showOrderOptions ? (
+                          <button
+                            onClick={() => setShowOrderOptions(true)}
+                            className="w-full py-4 px-6 rounded-xl font-semibold text-lg transition-all hover:opacity-90 flex items-center justify-center gap-2 text-white shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                            style={{ background: 'var(--primary)' }}
+                          >
+                            <span>Commander cette pizza</span>
+                          </button>
+                        ) : (
+                          <div className="space-y-3 w-full">
+                            <a
+                              href="tel:+33XXXXXXXXX"
+                              className="w-full bg-orange-500 hover:bg-orange-600 py-4 px-6 rounded-xl font-semibold text-lg transition-all hover:opacity-90 flex items-center justify-center gap-3 text-white shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                            >
+                              <FiPhone className="w-5 h-5" />
+                              <span>Appeler</span>
+                            </a>
+                            <a
+                              href="https://www.ubereats.com/fr/store/pizza-le-duc/ShfPBgd5WYG-0lAKLxIazQ"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="w-full bg-green-500 hover:bg-green-600 py-4 px-6 rounded-xl font-semibold text-lg transition-all hover:opacity-90 flex items-center justify-center gap-3 text-white shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                            >
+                              <SiUbereats className="w-5 h-5" />
+                              <span>Uber Eats</span>
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                )}
+                </div>
+                {/* MODIFICATION END */}
               </div>
 
-              {/* Content Section */}
+              {/* --- RIGHT COLUMN --- */}
               <div className="space-y-6">
                 {/* Description */}
                 <div>
@@ -243,90 +327,7 @@ const PizzaModal: React.FC<PizzaModalProps> = ({ pizza, isOpen, onClose }) => {
                   </div>
                 )}
 
-                {/* Quantity and Order */}
-                <div className="border-t pt-6">
-                  <div className="bg-gray-50 rounded-2xl p-6" style={{ backgroundColor: 'var(--muted)' }}>
-
-                    {/* Quantity Controls */}
-                    <div className="flex items-center justify-between mb-4">
-                      <div>
-                        <div className="text-sm" style={{ color: 'var(--muted-foreground)' }}>
-                          Prix unitaire
-                        </div>
-                        <div className="text-xl font-bold" style={{ color: 'var(--primary)' }}>
-                          {getSelectedPrice().toFixed(2)}€
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-3">
-                        <button
-                          onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                          className="w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors"
-                          style={{ color: 'var(--foreground)' }}
-                        >
-                          <Minus className="w-4 h-4" />
-                        </button>
-                        <span className="text-xl font-semibold w-8 text-center" style={{ color: 'var(--foreground)' }}>
-                          {quantity}
-                        </span>
-                        <button
-                          onClick={() => setQuantity(quantity + 1)}
-                          className="w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors"
-                          style={{ color: 'var(--foreground)' }}
-                        >
-                          <Plus className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Total Price */}
-                    <div className="border-t pt-4 mb-4" style={{ borderColor: 'var(--border)' }}>
-                      <div className="flex items-center justify-between mb-4">
-                        <span className="text-lg font-semibold" style={{ color: 'var(--foreground)' }}>
-                          Total
-                        </span>
-                        <span className="text-2xl font-bold" style={{ color: 'var(--primary)' }}>
-                          {getTotalPrice().toFixed(2)}€
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="relative" ref={menuRef}>
-                      <div className="space-y-2 transition-all duration-300 ease-in-out">
-                        {!showOrderOptions ? (
-                          <button
-                            onClick={() => setShowOrderOptions(true)}
-                            className="w-full py-3 px-4 rounded-xl font-medium transition-all hover:opacity-90 flex items-center justify-center gap-2 text-white"
-                            style={{ background: 'var(--primary)' }}
-                          >
-                            <span>Commander cette pizza</span>
-                          </button>
-                        ) : (
-                          <div className="space-y-2">
-                            <a
-                              href="tel:+33XXXXXXXXX"
-                              className="w-full py-3 px-4 rounded-xl font-medium transition-all hover:opacity-90 flex items-center justify-center gap-2 text-white"
-                              style={{ background: '#22c55e' }}
-                            >
-                              <FiPhone className="w-4 h-4" />
-                              <span>Appeler</span>
-                            </a>
-                            <a
-                              href="https://www.ubereats.com/fr/store/pizza-le-duc/ShfPBgd5WYG-0lAKLxIazQ"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="w-full py-3 px-4 rounded-xl font-medium transition-all hover:opacity-90 flex items-center justify-center gap-2 text-white"
-                              style={{ background: '#000000' }}
-                            >
-                              <SiUbereats className="w-4 h-4" />
-                              <span>Uber Eats</span>
-                            </a>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                {/* MODIFICATION: The order section was here, now it's removed. */}
               </div>
             </div>
           </div>

@@ -102,7 +102,7 @@ const HeroSlider = () => {
                     <Link
                       key={btnIndex}
                       href={button.link}
-                      className="bg-black hover:bg-gray-900 text-white px-6 py-2 rounded text-sm font-light tracking-wide transition-all duration-200 flex items-center gap-3"
+                      className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded text-sm font-light tracking-wide transition-all duration-200 flex items-center gap-3"
                     >
                       <SiUbereats className="w-6 h-6" />
                       {button.text}

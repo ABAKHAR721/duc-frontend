@@ -38,7 +38,7 @@ const Header = ({ variant = 'transparent' }: HeaderProps) => {
         <div className="max-w-7xl mx-auto px-8 py-6">
           <div className="flex items-center justify-between">
             {/* Logo - Left */}
-            <Logo />
+            <Logo variant={variant} />
 
             {/* Navigation Items - Right */}
             <nav className="flex items-center gap-10">
@@ -92,7 +92,7 @@ const Header = ({ variant = 'transparent' }: HeaderProps) => {
                     href="https://www.ubereats.com/fr/store/pizza-le-duc/ShfPBgd5WYG-0lAKLxIazQ"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 px-4 py-2.5 text-white bg-black hover:bg-gray-900 transition-colors duration-150 border-b border-white/20 text-xs"
+                    className="flex items-center gap-3 px-4 py-2.5 text-white bg-green-500 hover:bg-green-600 transition-colors duration-150 border-b border-white/20 text-xs"
                   >
                     <SiUbereats className="w-8 h-8" />
                     Par UberEat
@@ -108,7 +108,7 @@ const Header = ({ variant = 'transparent' }: HeaderProps) => {
       <div className={`md:hidden ${isTransparent ? 'bg-black/30 backdrop-blur-md' : 'bg-white border-b border-gray-100'}`}>
         <div className="px-4 py-4">
           <div className="flex items-center justify-between">
-            <Logo />
+            <Logo variant={variant} />
 
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -152,12 +152,38 @@ const Header = ({ variant = 'transparent' }: HeaderProps) => {
               >
                 Nous Trouver
               </Link>
-              <a
-                href="tel:+33123456789"
-                className="bg-primary text-white px-6 py-3 rounded-lg text-center font-semibold mt-2"
-              >
-                Commander
-              </a>
+              <div className="relative" ref={menuRef}>
+                <button
+                  onClick={() => setIsOrderOpen(!isOrderOpen)}
+                  className="bg-primary hover:bg-primary/90 text-white px-3 py-2.5 rounded-lg text-xs font-medium tracking-wide transition-all duration-200 flex items-center gap-2 w-32"
+                >
+                  Commander
+                  <FiChevronDown
+                    className={`w-3 h-3 transition-transform duration-300 ${isOrderOpen ? "rotate-180" : ""}`}
+                  />
+                </button>
+
+                {/* Animated Dropdown */}
+                <div className={`absolute top-full left-0 w-32 mt-1 bg-primary rounded-lg shadow-lg overflow-hidden transition-all duration-300 origin-top ${isOrderOpen ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0 pointer-events-none'}`}>
+                  <a
+                    href="tel:+33123456789"
+                    className="flex items-center gap-2 px-2 py-2.5 text-white/90 hover:text-white hover:bg-white/10 transition-colors duration-150 border-b border-white/20 text-xs"
+                  >
+                    <FiPhone className="w-3 h-3" />
+                    Par Téléphone
+                  </a>
+                  <a
+                    href="https://www.ubereats.com/fr/store/pizza-le-duc/ShfPBgd5WYG-0lAKLxIazQ"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-2 py-2.5 text-white bg-green-500 hover:bg-green-600 transition-colors duration-150 text-xs"
+                  >
+                    <SiUbereats className="w-4 h-4" />
+                    Par UberEat
+                  </a>
+                </div>
+              </div>
+                
             </nav>
           </div>
         )}

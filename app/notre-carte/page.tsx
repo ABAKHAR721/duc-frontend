@@ -118,14 +118,24 @@ const NotreCarte: React.FC = () => {
       // Special handling for different category types
       let categoryItems: ItemData[] = [];
       
-      // For "pizza-moment" category, include items from the parent category
-      if (categoryData.name.toLowerCase().includes('pizza-moment') || categoryData.name.toLowerCase().includes('pizza du moment')) {
+      // For special categories, show their own items directly
+      if (categoryData.name.toLowerCase().includes('pizza-moment') ||
+          categoryData.name.toLowerCase().includes('boissons') ||
+          categoryData.name.toLowerCase().includes('formules du midi') ||
+          categoryData.name.toLowerCase().includes('pizza du moment')) {
         categoryItems = items.filter(item => item.categoryId === categoryData.id);
+        console.log(`Special category "${categoryData.name}": showing ${categoryItems.length} direct items`);
       } 
-      // For other categories, only include items from subcategories
+      // For other categories, include items from subcategories if they exist
       else if (categoryData.children && categoryData.children.length > 0) {
         const subCategoryIds = categoryData.children.map((child: CategoryData) => child.id!);
         categoryItems = items.filter(item => subCategoryIds.includes(item.categoryId));
+        console.log(`Category "${categoryData.name}": showing ${categoryItems.length} items from ${categoryData.children.length} subcategories`);
+      }
+      // For categories without subcategories, show their own items
+      else {
+        categoryItems = items.filter(item => item.categoryId === categoryData.id);
+        console.log(`Category "${categoryData.name}": showing ${categoryItems.length} direct items (no subcategories)`);
       }
       
       // Extract available sizes from all items
@@ -222,9 +232,6 @@ const NotreCarte: React.FC = () => {
               Notre Carte
               <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-16 md:w-24 h-0.5 bg-gradient-to-r from-white to-white/50"></div>
             </h1>
-            <div className="inline-flex items-center gap-2 md:gap-3 px-4 md:px-6 py-2 md:py-3 rounded-full text-xs md:text-sm font-medium mb-6 relative overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 font-bold">
-              <span className="relative z-10 tracking-wide text-black">Découvrez nos créations artisanales, préparées avec passion et des ingrédients de qualité premium</span>
-            </div>
           </div>
         </div>
       </div>

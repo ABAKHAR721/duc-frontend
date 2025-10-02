@@ -121,8 +121,8 @@ const OrderModal: React.FC<OrderModalProps> = ({
                 `}
               >
                 <div className="flex items-center">
-                  <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-green-200 rounded-xl flex items-center justify-center mr-4">
-                    <FiPhone className="w-6 h-6 text-green-600" />
+                  <div className="w-12 h-12 bg-gradient-to-br from-orange-100 to-orange-200 rounded-xl flex items-center justify-center mr-4">
+                    <FiPhone className="w-6 h-6 text-orange-600" />
                   </div>
                   <div>
                     <div className="font-semibold" style={{ color: 'var(--foreground)' }}>Commande téléphonique</div>
@@ -142,7 +142,7 @@ const OrderModal: React.FC<OrderModalProps> = ({
                 `}
               >
                 <div className="flex items-center">
-                  <div className="w-12 h-12 bg-gradient-to-br from-black to-gray-800 rounded-xl flex items-center justify-center mr-4">
+                  <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center mr-4">
                     <SiUbereats className="w-6 h-6 text-white" />
                   </div>
                   <div>
@@ -164,7 +164,7 @@ const OrderModal: React.FC<OrderModalProps> = ({
               {orderMethod === 'phone' ? (
                 <button
                   onClick={handlePhoneOrder}
-                  className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-4 rounded-2xl font-semibold hover:from-green-600 hover:to-green-700 transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center gap-3"
+                  className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-4 rounded-2xl font-semibold hover:from-orange-600 hover:to-orange-700 transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center gap-3"
                 >
                   <FiPhone className="w-5 h-5" />
                   Appeler maintenant
@@ -172,9 +172,9 @@ const OrderModal: React.FC<OrderModalProps> = ({
               ) : (
                 <button
                   onClick={handleUberEatsOrder}
-                  className="w-full bg-gradient-to-r from-gray-800 to-black text-white py-4 rounded-2xl font-semibold hover:from-gray-900 hover:to-gray-800 transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center gap-3"
+                  className="w-full bg-green-500 hover:bg-green-600 text-white py-4 rounded-2xl font-semibold hover:from-gray-900 hover:to-gray-800 transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center gap-3"
                 >
-                  <SiUbereats className="w-5 h-5" />
+                  <SiUbereats className="w-8 h-8" />
                   Ouvrir Uber Eats
                 </button>
               )}
