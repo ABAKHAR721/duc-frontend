@@ -63,7 +63,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ coordinates, address }) => 
           {/* === AJOUT DU LIEN GOOGLE MAPS CI-DESSOUS === */}
           <a 
             href={googleMapsUrl} 
-            target="_blank" 
+            target="_blank"  
             rel="noopener noreferrer"
             className="text-orange-600 font-bold hover:underline mt-3 block text-sm"
           >
