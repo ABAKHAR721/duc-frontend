@@ -36,6 +36,9 @@ interface MapComponentProps {
 }
 
 const MapComponent: React.FC<MapComponentProps> = ({ coordinates, address }) => {
+  // On construit l'URL de Google Maps ici pour la réutiliser dans le Popup
+  const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${coordinates.lat},${coordinates.lng}`;
+
   return (
     <MapContainer 
       center={[coordinates.lat, coordinates.lng]} 
@@ -49,8 +52,23 @@ const MapComponent: React.FC<MapComponentProps> = ({ coordinates, address }) => 
       />
       <Marker position={[coordinates.lat, coordinates.lng]}>
         <Popup>
-          <div className="font-semibold text-base">Pizza Le Duc Podensac</div>
-          <p>{address.join(', ')}</p>
+          <div className="font-bold text-base text-gray-800">Pizza Le Duc</div>
+          <div className="text-sm mt-1 text-gray-600">
+            {/* On affiche chaque ligne de l'adresse pour une meilleure lisibilité */}
+            {address.map((line, index) => (
+              <p key={index} className="my-0">{line}</p>
+            ))}
+          </div>
+
+          {/* === AJOUT DU LIEN GOOGLE MAPS CI-DESSOUS === */}
+          <a 
+            href={googleMapsUrl} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-orange-600 font-bold hover:underline mt-3 block text-sm"
+          >
+            Ouvrir l'itinéraire sur Google Maps
+          </a>
         </Popup>
       </Marker>
     </MapContainer>

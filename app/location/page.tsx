@@ -1,4 +1,3 @@
-// /app/location/page.tsx
 'use client';
 
 import React from 'react';
@@ -57,11 +56,16 @@ const ContactAndLocationPage = () => {
         {/* Header Section */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-light text-gray-800 tracking-tight sm:text-5xl">
-            Nous Trouver & Contacter
+            Où manger chez Pizza LE DUC ?
           </h1>
-          <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-500">
-            Localisez notre pizzeria à Podensac et consultez nos horaires d'ouverture.
-          </p>
+          <div className="mt-8">
+            <a 
+              href="/notre-carte" 
+              className="inline-block bg-orange-600 text-white font-bold py-4 px-10 rounded-lg text-xl hover:bg-orange-700 transition-transform transform hover:scale-105 shadow-lg"
+            >
+              JE COMMANDE UNE PIZZA
+            </a>
+          </div>
         </div>
 
         {/* Main Content Grid */}
